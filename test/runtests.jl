@@ -123,9 +123,8 @@ end
     fA = filter(p -> p[1].a >= 3, w_ak)
     @test fA.:1 == AxisKeysExtra.grid(a=3:5)
     @test fA.:2 == A[a=3:5]
-    # need https://github.com/JuliaArrays/StructArrays.jl/pull/243:
-    @test_broken fA.:1 isa AxisKeysExtra.RectiGrid
-    @test_broken fA.:2 isa KeyedArray
+    @test fA.:1 isa AxisKeysExtra.RectiGrid
+    @test fA.:2 isa KeyedArray
 
     @test_broken filter!(p -> p[1].a >= 3, w_ak) === w_ak
 end
