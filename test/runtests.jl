@@ -4,6 +4,14 @@ using StructArrays
 using Test
 
 
+@testset begin
+    # https://github.com/mcabbott/AxisKeys.jl/pull/110
+    A = KeyedArray([1 2 3; 4 5 6], a=-1:0, b=1:3)
+    A(a=0, b=1, :) .= 1000
+    @test A(a=0, b=1) == 1000
+end
+
+
 @testset "eachslice" begin
     arr = KeyedArray([1 2 3; 4 5 6], a=-1:0, b=1:3)
 
