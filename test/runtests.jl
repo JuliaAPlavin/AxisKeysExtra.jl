@@ -1,5 +1,6 @@
 using AxisKeysExtra
 using AxisKeys: keyless_unname, keyless
+using StructArrays
 using Test
 
 
@@ -105,6 +106,33 @@ end
     @test with_axiskeys(findmin)(arr) == (1, (a=-1, b=1))
 end
 
+@testset "structarrays" begin
+    A = StructArray(a=KeyedArray(1:5; x=11:15), b=KeyedArray(10:10:50; x=11:15))
+    @test named_axiskeys(A) === (x=11:15,)
+    @test A.a == 1:5
+    @test A.x == 11:15
+    @test A[2].a == 2
+    @test A[x=2].b == 20
+    @test A[x=1:2].x == 11:12
+    @test A(x=13).a == 3
+    @test A(x= >=(13)).b == 30:10:50
+    @test A(x= >=(13)).x == 13:15
+
+    A = StructArray(a=KeyedArray([1 2]; x=[:x], y=11:12), b=KeyedArray([10 20]; x=[:x], y=11:12))
+    @test named_axiskeys(A) == (x=[:x], y=11:12)
+    @test A.a == [1 2]
+    @test A.x == [:x]
+    @test A[1, 2].a == 2
+    @test A[x=1].b == [10, 20]
+    @test A[x=1, y=2].b == 20
+    @test A[y=1:2].x == [:x]
+    @test A(x=:x, y=11).a == 1
+end
+
 
 import CompatHelperLocal as CHL
 CHL.@check()
+
+import Aqua
+Aqua.test_ambiguities(AxisKeysExtra; recursive=false)
+Aqua.test_all(AxisKeysExtra; ambiguities=false)
