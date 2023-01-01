@@ -67,17 +67,33 @@ end
 end
 
 @testset "axiskeys grid" begin
-    arr = KeyedArray([1 2 3; 4 5 6], a=-1:0, b=1:3)
-    ak_g = axiskeys_grid(arr)
+    A = KeyedArray([1 2 3; 4 5 6], a=-1:0, b=1:3)
+    ak_g = axiskeys_grid(A)
     @test ak_g isa AxisKeysExtra.RectiGrid
     @test isconcretetype(eltype(ak_g))
     @test ak_g == [(a=-1, b=1) (a=-1, b=2) (a=-1, b=3); (a=0, b=1) (a=0, b=2) (a=0, b=3)]
 
-    w_ak = with_axiskeys(arr)
+    w_ak = with_axiskeys(A)
     @test isconcretetype(eltype(w_ak))
     @test w_ak[2, 3] === ((a=0, b=3) => 6)
     @test w_ak.:1 == ak_g
-    @test w_ak.:2 === arr
+    @test w_ak.:2 === A
+
+    fA = filter(p -> p[1].a >= 0, w_ak)
+    @test fA.:1 == vec(AxisKeysExtra.grid(a=0:0, b=1:3))
+    @test fA.:2 == vec(A(a=0:0, b=1:3))
+
+    A = KeyedArray(10:10:50, a=1:5)
+    w_ak = with_axiskeys(A)
+
+    fA = filter(p -> p[1].a >= 3, w_ak)
+    @test fA.:1 == AxisKeysExtra.grid(a=3:5)
+    @test fA.:2 == A[a=3:5]
+    # need https://github.com/JuliaArrays/StructArrays.jl/pull/243:
+    @test_broken fA.:1 isa AxisKeysExtra.RectiGrid
+    @test_broken fA.:2 isa KeyedArray
+
+    @test_broken filter!(p -> p[1].a >= 3, w_ak) === w_ak
 end
 
 @testset "with_axiskeys funcs" begin
