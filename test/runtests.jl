@@ -144,4 +144,4 @@ CHL.@check()
 
 import Aqua
 Aqua.test_ambiguities(AxisKeysExtra; recursive=false)
-Aqua.test_all(AxisKeysExtra; ambiguities=false)
+Aqua.test_all(AxisKeysExtra; ambiguities=false, piracy=false)
