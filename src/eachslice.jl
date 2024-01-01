@@ -1,10 +1,5 @@
-@static if VERSION > v"1.9-DEV"
-    # AxisKeys defines their own eachslice method, so here we explicitly call the base AbstractArray one
-    _base_eachslice(A; dims) = @invoke eachslice(A::AbstractArray; dims)
-else
-    using SplitApplyCombine
-    _base_eachslice(A; dims) = splitdimsview(A, dims)
-end
+using SplitApplyCombine
+_base_eachslice(A; dims) = splitdimsview(A, dims)
 
 function eachslice(A::KeyedArray; dims)
     dims_ix = AxisKeys.dim(A, dims) |> Tuple

@@ -18,7 +18,8 @@ end
     # Base method for regular array
     @test collect(eachslice(keyless_unname(arr); dims=1)) == [[1, 2, 3], [4, 5, 6]]
 
-    @testset "nameddims" begin
+    # 1.9 eachslice not implemented upstream in NamedDims, only in AxisKeys
+    VERSION < v"1.9-DEV" && @testset "nameddims" begin
         S = eachslice(keyless(arr); dims=1)::NamedDimsArray
         @test S == [[1, 2, 3], [4, 5, 6]] 
         @test dimnames(S) == (:a,)
@@ -144,4 +145,5 @@ CHL.@check()
 
 import Aqua
 Aqua.test_ambiguities(AxisKeysExtra; recursive=false)
-Aqua.test_all(AxisKeysExtra; ambiguities=false, piracy=false)
+# loads SplitApplyCombine only on earlier versions
+VERSION < v"1.9-DEV" && Aqua.test_all(AxisKeysExtra; ambiguities=false, piracy=false)
