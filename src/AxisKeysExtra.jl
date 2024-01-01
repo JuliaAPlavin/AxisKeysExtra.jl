@@ -8,24 +8,8 @@ using StructArrays: component, components
 
 export axiskeys_grid, with_axiskeys
 
-
 include("structarrays.jl")
 include("functions.jl")
-if VERSION < v"1.9-DEV"
-    import Compat: stack
-    import Base: eachslice
-
-    export stack
-
-    include("eachslice.jl")
-    include("stack.jl")
-end
-
-
-if VERSION > v"1.9-DEV"
-    # fix for AxisKeys
-    Base.uncolon(inds, I) = Base.uncolon(inds)
-end
 
 
 # https://github.com/mcabbott/AxisKeys.jl/pull/110
