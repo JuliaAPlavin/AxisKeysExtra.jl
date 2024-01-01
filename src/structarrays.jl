@@ -1,4 +1,4 @@
-const TupKeyedArray = Union{Tuple{Vararg{<:KeyedArray}}, NamedTuple{<:Any, <:Tuple{Vararg{<:KeyedArray}}}}
+const TupKeyedArray = Union{Tuple{Vararg{KeyedArray}}, NamedTuple{<:Any, <:Tuple{Vararg{KeyedArray}}}}
 const StructKeyedArray{T} = StructArray{T, <:Any, <:TupKeyedArray, <:Any}
 
 function AxisKeys.dimnames(A::StructKeyedArray)
