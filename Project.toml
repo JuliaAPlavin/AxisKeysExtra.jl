@@ -5,18 +5,19 @@ version = "0.1.9"
 
 [deps]
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
-RectiGrids = "8ac6971d-971d-971d-971d-971d5ab1a71a"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 StructArrays = "09ab397b-f2b6-538f-b94a-2f83cf4a842a"
 
 [weakdeps]
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+RectiGrids = "8ac6971d-971d-971d-971d-971d5ab1a71a"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [extensions]
 DimensionalDataExt = "DimensionalData"
 MakieExt = "Makie"
+RectiGridsExt = "RectiGrids"
 UnitfulExt = "Unitful"
 
 [compat]

@@ -2,11 +2,10 @@ module AxisKeysExtra
 
 using Reexport
 @reexport using AxisKeys
-using RectiGrids
 using StructArrays
 using StructArrays: component, components
 
-export axiskeys_grid, with_axiskeys, dimlabel
+export with_axiskeys, dimlabel
 
 include("structarrays.jl")
 include("functions.jl")
