@@ -7,6 +7,11 @@ using Makie
 import Makie: convert_arguments
 
 
+for T in (PointBased, Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
+    @eval convert_arguments(ct::$T, x::KeyedArray{<:Any,1}) =
+        convert_arguments(ct, _ustrip(only(axiskeys(x))), keyless_unname(x) |> _ustrip)
+end
+
 function convert_arguments(ct::ImageLike, x::KeyedArray{<:Any,2})
     aks = axiskeys(x)
     edges = map(ak -> _ustrip.(extrema(ak) .+ (-step(ak)/2, step(ak)/2)), aks)
@@ -25,14 +30,17 @@ convert_arguments(ct::GridBased, x::KeyedArray{<:Any,2}) =
 convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
     convert_arguments(ct, Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))') |> vec, keyless_unname(x) |> _ustrip |> vec)
 
-# also make sense:
-# 2d: contour3d, surface, tricontourf, wireframe
-# 3d: volume, volumeslices
+convert_arguments(ct::Type{<:Union{Volume,VolumeSlices}}, x::KeyedArray{<:Any,3}) =
+    convert_arguments(ct, _ustrip.(axiskeys(x))..., keyless_unname(x) |> _ustrip)
+
+# also make sense for irregular: tricontourf, wireframe
 plotfs_1d = (:scatter, :lines, :scatterlines, :band, :errorbars, :rangebars, :stairs, :stem, :barplot)
-plotfs_2d = (:heatmap, :image, :contour, :contourf, :arrows)
-for plotf in (plotfs_1d..., plotfs_2d...)
+plotfs_2d = (:heatmap, :image, :contour, :contourf, :contour3d, :surface, :wireframe, :arrows)
+plotfs_3d = (:volume, :volumeslices)
+for plotf in (plotfs_1d..., plotfs_2d..., plotfs_3d...)
     plotf_excl = Symbol(plotf, :!)
-    KA_TYPE = KeyedArray{<:Any, plotf in plotfs_2d ? 2 : 1}
+    KA_TYPE = KeyedArray{<:Any, plotf in plotfs_3d ? 3 : plotf in plotfs_2d ? 2 : plotf in plotfs_1d ? 1 : error()}
+    AxisT = plotf in (plotfs_3d..., :surface, :wireframe) ? Axis3 : Axis
 
     @eval function Makie.$plotf(A::Observable{<:$KA_TYPE}; figure=(;), kwargs...)
         fig = Figure(; figure...)
@@ -54,7 +62,7 @@ for plotf in (plotfs_1d..., plotfs_2d...)
             end
         end
         ax_kwargs = merge(
-            allequal(map(eltype, akeys)) ? (aspect=DataAspect(),) : (;),
+            allequal(map(eltype, akeys)) ? (aspect=$(AxisT == Axis3 ? QuoteNode(:data) : DataAspect()),) : (;),
             (
                 xreversed=signs[1] < 0,
                 xlabel=dimlabel(A[], 1),
@@ -63,9 +71,13 @@ for plotf in (plotfs_1d..., plotfs_2d...)
                 yreversed=signs[2] < 0,
                 ylabel=dimlabel(A[], 2),
             ) : (;),
+            ndims(A[]) ≥ 3 ? (
+                zreversed=signs[2] < 0,
+                zlabel=dimlabel(A[], 2),
+            ) : (;),
             axis,
         )
-        ax = Axis(pos; ax_kwargs...)
+        ax = $AxisT(pos; ax_kwargs...)
         plt = $plotf_excl(ax, A; kwargs...)
         Makie.AxisPlot(ax, plt)
     end

@@ -96,7 +96,7 @@ end
 
     fig = Figure()
 
-    @testset for plotf in (:heatmap, :image, :contour, :contourf)
+    @testset for plotf in (:heatmap, :image, :contour, :contourf, :contour3d, :surface)  # :wireframe
         plotf_excl = Symbol(plotf, :!)
 
         @eval $plotf(KA)
@@ -124,7 +124,7 @@ end
     end
 
     KA_nonunif = KeyedArray([1 2 3; 4 5 6], a=-10:10:0, b=[1, 3, 10])
-    @testset for plotf in (:heatmap, :contour, :contourf)
+    @testset for plotf in (:heatmap, :contour, :contourf, :contour3d, :surface)  # :wireframe
         plotf_excl = Symbol(plotf, :!)
 
         @eval $plotf(KA_nonunif)
@@ -157,6 +157,19 @@ end
     #     @eval $plotf(fig[1,1], Observable(KA1d))
     #     @eval $plotf_excl(Observable(KA1d))
     # end
+
+    KA3d = KeyedArray(reshape(1:12, (2, 3, 2)), a=-10:10:0, b=1:3, c=[5, 7]u"km")
+    @testset for plotf in (:volume, :volumeslices)
+        plotf_excl = Symbol(plotf, :!)
+
+        @eval $plotf(KA3d)
+        @eval $plotf(fig[1,1], KA3d)
+        @eval $plotf_excl(KA3d)
+
+        @eval $plotf(Observable(KA3d))
+        @eval $plotf(fig[1,1], Observable(KA3d))
+        @eval $plotf_excl(Observable(KA3d))
+    end
 end
 
 @testitem "_" begin
