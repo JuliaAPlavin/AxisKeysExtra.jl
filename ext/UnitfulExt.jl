@@ -8,9 +8,6 @@ function _dimlabel(dimname, axiskeys::AbstractVector{<:Quantity})
 	"$dimname ($u)"
 end
 
-_ustrip(x::Quantity) = ustrip(x)
-_ustrip(x::AbstractArray{<:Quantity}) = ustrip.(x)
-_ustrip(x::AbstractRange{<:Quantity}) = ustrip.(x)  # preserves range; separate method from the above just for clarity
-_ustrip(x::Array{<:Quantity}) = ustrip(x)  # reinterprets
+_ustrip(x::Union{Quantity,AbstractArray{<:Quantity}}) = ustrip(x)
 
 end
