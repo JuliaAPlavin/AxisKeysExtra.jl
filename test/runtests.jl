@@ -121,6 +121,15 @@ end
         @eval $plotf(fig[1,1], Observable(KA_2d))
         @eval $plotf_excl(Observable(KA_2d))
     end
+
+    KA_nonunif = KeyedArray([1 2 3; 4 5 6], a=-10:10:0, b=[1, 3, 10])
+    @testset for plotf in (:heatmap, :contour, :contourf)
+        plotf_excl = Symbol(plotf, :!)
+
+        @eval $plotf(KA_nonunif)
+        @eval $plotf(fig[1,1], KA_nonunif)
+        @eval $plotf_excl(KA_nonunif)
+    end
 end
 
 @testitem "_" begin

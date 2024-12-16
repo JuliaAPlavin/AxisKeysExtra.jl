@@ -38,12 +38,21 @@ for plotf in (:heatmap, :image, :contour, :contourf, :arrows)
 	@eval function Makie.$plotf(pos::Union{GridPosition, GridSubposition}, A::Observable{<:$KA_TYPE}; axis=(;), kwargs...)
 		# XXX: all observable changes should be taken into account
 		akeys = axiskeys(A[])
-		@assert all(ak -> ak isa AbstractRange, akeys)
+		signs = map(akeys) do ak
+			d = diff(ak)
+			if all(≥(zero(eltype(d))), d)
+				1
+			elseif all(≤(zero(eltype(d))), d)
+				-1
+			else
+				error("Axis keys must be monotonically increasing or decreasing; got $ak.")
+			end
+		end
 		ax_kwargs = merge(
 			allequal(map(eltype, akeys)) ? (aspect=DataAspect(),) : (;),
 			(
-				xreversed=step(akeys[1]) < zero(step(akeys[1])),
-				yreversed=step(akeys[2]) < zero(step(akeys[2])),
+				xreversed=signs[1] < 0,
+				yreversed=signs[2] < 0,
 				xlabel=dimlabel(A[], 1),
 				ylabel=dimlabel(A[], 2)
 			),
