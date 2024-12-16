@@ -9,7 +9,7 @@ import Makie: convert_arguments
 
 function convert_arguments(ct::ImageLike, x::KeyedArray{<:Any,2})
 	aks = axiskeys(x)
-	edges = map(ak -> _ustrip.(extrema(ak)), aks)  # XXX: edges "off by one"?
+	edges = map(ak -> _ustrip.(extrema(ak) .+ (-step(ak)/2, step(ak)/2)), aks)  # XXX: edges "off by one"?
 	if step(aks[1]) < zero(step(aks[1]))
 		x = reverse(x, dims=1)
 	end
