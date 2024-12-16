@@ -11,6 +11,8 @@ export axiskeys_grid, with_axiskeys
 include("structarrays.jl")
 include("functions.jl")
 
+__precompile__(false)  # because of method overwriting
+
 
 # https://github.com/mcabbott/AxisKeys.jl/pull/110
 NdaKa{L,T,N} = NamedDimsArray{L,T,N,<:KeyedArray{T,N}}
