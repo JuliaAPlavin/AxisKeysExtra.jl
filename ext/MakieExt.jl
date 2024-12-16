@@ -53,35 +53,7 @@ for plotf in (plotfs_1d..., plotfs_2d..., plotfs_3d...)
     end
 
     @eval function Makie.$plotf(pos::Union{GridPosition, GridSubposition}, A::Observable{<:$KA_TYPE}; axis=(;), kwargs...)
-        # XXX: all observable changes should be taken into account
-        akeys = axiskeys(A[])
-        signs = map(akeys) do ak
-            d = diff(ak)
-            if all(≥(zero(eltype(d))), d)
-                1
-            elseif all(≤(zero(eltype(d))), d)
-                -1
-            else
-                error("Axis keys must be monotonically increasing or decreasing; got $ak.")
-            end
-        end
-        use_dataaspect = ndims(A[]) > 1 && allequal(map(eltype, akeys))
-        ax_kwargs = merge(
-            use_dataaspect ? (aspect=$(AxisT == Axis3 ? QuoteNode(:data) : DataAspect()),) : (;),
-            (
-                xreversed=signs[1] < 0,
-                xlabel=dimlabel(A[], 1),
-            ),
-            ndims(A[]) ≥ 2 ? (
-                yreversed=signs[2] < 0,
-                ylabel=dimlabel(A[], 2),
-            ) : (;),
-            ndims(A[]) ≥ 3 ? (
-                zreversed=signs[3] < 0,
-                zlabel=dimlabel(A[], 3),
-            ) : (;),
-            axis,
-        )
+        ax_kwargs = merge(default_axis_attributes($Plot{$plotf}, A), axis)
         ax = $AxisT(pos; ax_kwargs...)
         plt = $plotf_excl(ax, A; kwargs...)
         Makie.AxisPlot(ax, plt)
@@ -89,6 +61,38 @@ for plotf in (plotfs_1d..., plotfs_2d..., plotfs_3d...)
 
     @eval Makie.$plotf(pos::Union{GridPosition, GridSubposition}, A::$KA_TYPE; kwargs...) = $plotf(pos, Observable(A); kwargs...)
     @eval Makie.$plotf(A::$KA_TYPE; kwargs...) = $plotf(Observable(A); kwargs...)
+end
+
+
+function default_axis_attributes(T, A::Observable{<:KeyedArray{<:Any,N}}; kwargs...) where {N}
+    akeys = @lift axiskeys($A)
+    signs = @lift map($akeys) do ak
+        d = diff(ak)
+        if all(≥(zero(eltype(d))), d)
+            1
+        elseif all(≤(zero(eltype(d))), d)
+            -1
+        else
+            error("Axis keys must be monotonically increasing or decreasing; got $ak.")
+        end
+    end
+    use_dataaspect = @lift N > 1 && allequal(map(eltype, $akeys))
+    dataaspect = N == 3 || T ∈ (Surface, Wireframe) ? :data : DataAspect()
+    merge(
+        use_dataaspect[] ? (;aspect=dataaspect) : (;),
+        (
+            xreversed=(@lift $signs[1] < 0),
+            xlabel=(@lift dimlabel($A, 1)),
+        ),
+        N ≥ 2 ? (
+            yreversed=(@lift $signs[2] < 0),
+            ylabel=(@lift dimlabel($A, 2)),
+        ) : (;),
+        N ≥ 3 ? (
+            zreversed=(@lift $signs[3] < 0),
+            zlabel=(@lift dimlabel($A, 3)),
+        ) : (;),
+    )
 end
 
 end
