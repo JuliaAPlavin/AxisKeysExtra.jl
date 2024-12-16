@@ -8,11 +8,11 @@ import Makie: convert_arguments
 
 
 for T in (PointBased, Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
-    @eval convert_arguments(ct::$T, x::KeyedArray{<:Any,1}) =
-        convert_arguments(ct, _ustrip(only(axiskeys(x))), keyless_unname(x) |> _ustrip)
+    @eval Makie.expand_dimensions(::$T, x::KeyedArray) = (only(axiskeys(x)), keyless_unname(x) |> _ustrip)
 end
 
-function convert_arguments(ct::ImageLike, x::KeyedArray{<:Any,2})
+
+function Makie.expand_dimensions(ct::ImageLike, x::KeyedArray{<:Any,2})
     aks = axiskeys(x)
     edges = map(ak -> _ustrip.(extrema(ak) .+ (-step(ak)/2, step(ak)/2)), aks)
     if step(aks[1]) < zero(step(aks[1]))
@@ -21,11 +21,10 @@ function convert_arguments(ct::ImageLike, x::KeyedArray{<:Any,2})
     if step(aks[2]) < zero(step(aks[2]))
         x = reverse(x, dims=2)
     end
-    convert_arguments(ct, edges..., keyless_unname(x) |> _ustrip)
+    (edges..., keyless_unname(x) |> _ustrip)
 end
 
-convert_arguments(ct::GridBased, x::KeyedArray{<:Any,2}) =
-    convert_arguments(ct, _ustrip.(axiskeys(x))..., keyless_unname(x) |> _ustrip)
+Makie.expand_dimensions(ct::GridBased, x::KeyedArray{<:Any,2}) = (axiskeys(x)..., keyless_unname(x) |> _ustrip)
 
 convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
     convert_arguments(ct, Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))') |> vec, keyless_unname(x) |> _ustrip |> vec)
