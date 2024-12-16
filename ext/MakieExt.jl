@@ -6,7 +6,7 @@ using AxisKeysExtra.AxisKeys: keyless_unname
 using Makie
 
 
-_ustrip(x::AbstractArray{<:Union{String,Symbol}}) = Categorical(x)
+_ustrip(x::AbstractArray{<:Union{AbstractString,Symbol,AbstractChar}}) = Categorical(x)
 
 # hack: otherwise need a more involved overload of Makie.numbers_to_colors
 Base.convert(::Type{<:Union{T,Array{T,N}}}, X::KeyedArray{T,N}) where {T<:Makie.Colorant,N} = AxisKeys.keyless_unname(X)::Array{T,N}
