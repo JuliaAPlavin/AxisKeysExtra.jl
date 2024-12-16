@@ -8,4 +8,4 @@ ix_to_axiskeys(A, ix) = NamedTuple{dimnames(A)}(map((i, vs) -> vs[i], Tuple(ix),
 
 
 dimlabel(A, i) = _dimlabel(dimnames(A, i), axiskeys(A, i))
-_dimlabel(dimname, _) = "$dimname"
+_dimlabel(dimname, _) = dimname == :_ ? "" : "$dimname"
