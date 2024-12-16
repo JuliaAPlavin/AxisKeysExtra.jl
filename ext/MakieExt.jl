@@ -40,6 +40,8 @@ Makie.Isoband.isobands(xs::AbstractVector, ys::AbstractVector, zs::KeyedArray, l
     Makie.Isoband.isobands(xs, ys, keyless_unname(zs), lows, highs)
 
 Makie.expand_dimensions(ct::GridBased, x::KeyedArray{<:Any,2}) = (_ustrip.(axiskeys(x))..., x |> _ustrip)
+# https://github.com/MakieOrg/Makie.jl/issues/4204:
+Makie.expand_dimensions(ct::Union{VertexGrid,CellGrid}, x::KeyedArray{<:Any,2}) = (_ustrip.(axiskeys(x))..., x |> _ustrip)
 
 Makie.convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
     convert_arguments(ct, Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))'), x |> _ustrip)
