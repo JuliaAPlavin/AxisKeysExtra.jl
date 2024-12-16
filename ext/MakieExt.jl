@@ -11,6 +11,11 @@ for T in (PointBased, Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
     @eval Makie.expand_dimensions(::$T, x::KeyedArray) = (only(axiskeys(x)), keyless_unname(x) |> _ustrip)
 end
 
+for T in (Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
+    @eval convert_arguments(ct::$T, x::KeyedArray{<:Any,1}) =
+        convert_arguments(ct, _ustrip(only(axiskeys(x))), keyless_unname(x) |> _ustrip)
+end
+
 
 function Makie.expand_dimensions(ct::ImageLike, x::KeyedArray{<:Any,2})
     aks = axiskeys(x)

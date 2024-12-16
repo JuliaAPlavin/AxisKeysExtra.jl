@@ -154,18 +154,18 @@ end
         @eval $plotf_excl(Observable(KA1d))
     end
     KA1d = KeyedArray(Interval.([1, 5, 2, 1], [1, 5, 2, 1] .+ 1), x=[1, 5, 10, 20]u"km")
-    # waiting for Makie release with my PR https://github.com/MakieOrg/Makie.jl/pull/3695
-    # @testset for plotf in (:band, :errorbars, :rangebars)
-    #     plotf_excl = Symbol(plotf, :!)
 
-    #     @eval $plotf(KA1d)
-    #     @eval $plotf(fig[1,end+1], KA1d)
-    #     @eval $plotf_excl(KA1d)
+    @testset for plotf in (:band, :rangebars)
+        plotf_excl = Symbol(plotf, :!)
 
-    #     @eval $plotf(Observable(KA1d))
-    #     @eval $plotf(fig[1,end+1], Observable(KA1d))
-    #     @eval $plotf_excl(Observable(KA1d))
-    # end
+        @eval $plotf(KA1d)
+        @eval $plotf(fig[1,end+1], KA1d)
+        @eval $plotf_excl(KA1d)
+
+        @eval $plotf(Observable(KA1d))
+        @eval $plotf(fig[1,end+1], Observable(KA1d))
+        @eval $plotf_excl(Observable(KA1d))
+    end
 
     KA3d = KeyedArray(reshape(1:12, (2, 3, 2)), a=-10:10:0, b=1:3, c=[5, 7]u"km")
     @testset for plotf in (:volume, :volumeslices)
