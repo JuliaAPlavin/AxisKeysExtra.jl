@@ -210,6 +210,17 @@ end
     end
 end
 
+@testitem "2d geomakie" begin
+    using GeoMakie
+
+    X = KeyedArray([1 2 3; 4 5 6], lon=-10:10:0, lat=1:3)
+    fig = Figure()
+    ga = GeoAxis(fig[1,1]; dest="+proj=moll", xreversed=true)
+    heatmap!(ga, X)
+    image!(ga, X)
+    contour!(ga, X)
+end
+
 @testitem "3d" begin
     using Makie
     using Unitful
