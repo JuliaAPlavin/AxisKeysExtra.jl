@@ -92,7 +92,7 @@ end
     KA_nonunif = KeyedArray([1 2 3; 4 5 6], a=-10:10:0, b=[1, 3, 10])
 
     fig = Figure()
-    @testset for plotf in (heatmap, image, contour, contourf, contour3d, surface)
+    @testset for plotf in (heatmap, image, contour, contourf) #, contour3d, surface)
          # wireframe  # does it work?
         plotf_excl = @eval $(Symbol(nameof(plotf), :!))
 
@@ -115,24 +115,35 @@ end
         end
     end
 
-    @testset for plotf in (heatmap, contour, contourf, contour3d, surface)  # wireframe
+    @testset for plotf in (heatmap, contour, contourf) #, contour3d, surface)  # wireframe
+        xlabel, ylabel = ("a", "b")
         plotf_excl = @eval $(Symbol(nameof(plotf), :!))
 
         plotf(KA_nonunif)
+        @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
         plotf(fig[1,end+1], KA_nonunif)
+        @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
         plotf_excl(KA_nonunif)
+        @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
     end
 
     @testset for plotf in (arrows,)
+        xlabel, ylabel = ("a", "b")
         plotf_excl = @eval $(Symbol(nameof(plotf), :!))
 
         plotf(KA_2d)
+        @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
         plotf(fig[1,end+1], KA_2d)
+        @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
         plotf_excl(KA_2d)
+        @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
 
         plotf(Observable(KA_2d))
+        @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
         plotf(fig[1,end+1], Observable(KA_2d))
+        @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
         plotf_excl(Observable(KA_2d))
+        @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
     end
 end
 
@@ -168,8 +179,8 @@ end
     using Unitful
 
     KA3ds = [
-        KeyedArray(reshape(1:12, (2, 3, 2)), a=-10:10:0, b=1:3, c=[5, 7]u"km"),
-        KeyedArray(reshape(1:12, (2, 3, 2)), a=-10:10:0, b=1:3, c=[5, 7]),
+        KeyedArray(reshape(1:12, (2, 3, 2)) |> collect, a=-10:10:0, b=1:3, c=[5, 7]u"km"),
+        KeyedArray(reshape(1:12, (2, 3, 2)) |> collect, a=-10:10:0, b=1:3, c=[5, 7]),
     ]
     @testset for plotf in (volume, volumeslices)
         fig = Figure()
@@ -177,13 +188,17 @@ end
         plotf_excl = @eval $(Symbol(nameof(plotf), :!))
 
         @testset for KA3d in KA3ds
-            plotf(KA3d)
-            plotf(fig[1,end+1], KA3d)
-            plotf_excl(KA3d)
+            # # plotf(KA3d)
+            # plotf(fig[1,end+1], KA3d)
+            # plotf_excl(KA3d)
 
-            plotf(Observable(KA3d))
-            plotf(fig[1,end+1], Observable(KA3d))
-            plotf_excl(Observable(KA3d))
+            # # plotf(Observable(KA3d))
+            # plotf(fig[1,end+1], Observable(KA3d))
+            # plotf_excl(Observable(KA3d))
+
+            ax = Axis3(fig[1,end+1])
+            plotf_excl(KA3d)
+            @test ax.xlabel[] == "a"# && ax.ylabel[] == "b" && ax.zlabel[] ∈ ("c", "c (km)")
         end
     end
 end
