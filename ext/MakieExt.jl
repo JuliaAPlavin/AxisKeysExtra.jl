@@ -10,12 +10,14 @@ _ustrip(x::AbstractArray{<:Union{String,Symbol}}) = Categorical(x)
 
 
 for T in (PointBased, Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
-    @eval Makie.expand_dimensions(::$T, x::KeyedArray) = (_ustrip(only(axiskeys(x))), keyless_unname(x) |> _ustrip)
+    @eval Makie.expand_dimensions(::$T, x::KeyedArray) = (_ustrip(only(axiskeys(x))), x |> _ustrip)
+    @eval Makie.expand_dimensions(::$T, x::KeyedArray{<:Point}) = (x,)
+    @eval Makie.expand_dimensions(::$T, x::KeyedArray{<:Tuple{Point,Point}}) = (x,)
 end
 
 for T in (Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
     @eval Makie.convert_arguments(ct::$T, x::KeyedArray{<:Any,1}) =
-        convert_arguments(ct, _ustrip(only(axiskeys(x))), keyless_unname(x) |> _ustrip)
+        convert_arguments(ct, _ustrip(only(axiskeys(x))), x |> _ustrip)
 end
 
 
@@ -28,16 +30,19 @@ function Makie.expand_dimensions(ct::ImageLike, x::KeyedArray{<:Any,2})
     if step(aks[2]) < zero(step(aks[2]))
         x = reverse(x, dims=2)
     end
-    (edges..., keyless_unname(x) |> _ustrip)
+    (edges..., x |> _ustrip)
 end
 
-Makie.expand_dimensions(ct::GridBased, x::KeyedArray{<:Any,2}) = (_ustrip.(axiskeys(x))..., keyless_unname(x) |> _ustrip)
+Makie.Isoband.isobands(xs::AbstractVector, ys::AbstractVector, zs::KeyedArray, lows::AbstractVector, highs::AbstractVector) =
+    Makie.Isoband.isobands(xs, ys, keyless_unname(zs), lows, highs)
+
+Makie.expand_dimensions(ct::GridBased, x::KeyedArray{<:Any,2}) = (_ustrip.(axiskeys(x))..., x |> _ustrip)
 
 Makie.convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
-    convert_arguments(ct, Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))') |> vec, keyless_unname(x) |> _ustrip |> vec)
+    convert_arguments(ct, Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))') |> vec, x |> _ustrip |> vec)
 
 Makie.convert_arguments(ct::Type{<:Union{Volume,VolumeSlices}}, x::KeyedArray{<:Any,3}) =
-    convert_arguments(ct, _ustrip.(axiskeys(x))..., keyless_unname(x) |> _ustrip)
+    convert_arguments(ct, _ustrip.(axiskeys(x))..., x |> _ustrip)
 
 # also make sense for irregular: tricontourf, wireframe
 plotfs_1d = (:scatter, :lines, :scatterlines, :band, :errorbars, :rangebars, :stairs, :stem, :barplot)
