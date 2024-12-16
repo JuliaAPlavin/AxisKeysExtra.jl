@@ -191,11 +191,11 @@ end
 
     KA2s = [
         KeyedArray([1 2 3; 4 5 6], a=["a", "b"], b=1:3),
-        KeyedArray([1 2 3; 4 5 6], a=["a", "b"], b=["c", "d", "e"]),
-        KeyedArray([1 2 3; 4 5 6]u"m", a=["a", "b"], b=["c", "d", "e"]),
+        KeyedArray([1 2 3; 4 5 6], a=[:a, :b], b=["c", "d", "e"]),
+        KeyedArray([1 2 3; 4 5 6]u"m", a=['a', 'b'], b=["c", "d", "e"]),
         KeyedArray([1 2 3; 4 5 6]u"m", a=(1:2)u"km", b=["c", "d", "e"]),
     ]
-    @testset for plotf in (heatmap,)# image, contour, contourf, contour3d, surface)
+    @testset for plotf in (heatmap,)
         plotf_excl = @eval $(Symbol(nameof(plotf), :!))
 
         @testset for KA in KA2s
