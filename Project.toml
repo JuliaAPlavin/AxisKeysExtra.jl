@@ -24,7 +24,7 @@ UnitfulExt = "Unitful"
 
 [compat]
 AxisKeys = "0.2.12"
-DimensionalData = "0.23, 0.24, 0.25, 0.26, 0.27, 0.28"
+DimensionalData = "0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29"
 GeoMakie = "0.7"
 Makie = "0.21.2"
 RectiGrids = "0.1.14"
