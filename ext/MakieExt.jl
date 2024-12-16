@@ -61,8 +61,9 @@ for plotf in (plotfs_1d..., plotfs_2d..., plotfs_3d...)
                 error("Axis keys must be monotonically increasing or decreasing; got $ak.")
             end
         end
+        use_dataaspect = ndims(A[]) > 1 && allequal(map(eltype, akeys))
         ax_kwargs = merge(
-            allequal(map(eltype, akeys)) ? (aspect=$(AxisT == Axis3 ? QuoteNode(:data) : DataAspect()),) : (;),
+            use_dataaspect ? (aspect=$(AxisT == Axis3 ? QuoteNode(:data) : DataAspect()),) : (;),
             (
                 xreversed=signs[1] < 0,
                 xlabel=dimlabel(A[], 1),
