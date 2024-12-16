@@ -22,6 +22,9 @@ using DimensionalData
 # ╔═╡ bc794996-0eec-4cb0-a0b5-0a84da50ad2d
 using Unitful
 
+# ╔═╡ 2f09b7ea-8b10-4a77-a655-3b8a1f7ee5fa
+using Dates
+
 # ╔═╡ 1b705f90-ef2b-4b20-bd26-6f66a8ff6605
 using CairoMakie
 
@@ -198,6 +201,17 @@ let
 	fig
 end
 
+# ╔═╡ 2a32c390-6a3c-4218-a64a-8231b1d19fd9
+md"""
+Categorical axes are also supported! Note that this feature is kinda experimental, both here and in Makie itself.
+"""
+
+# ╔═╡ 79ac3f5a-d1c7-4086-8a5e-8d746066486b
+scatter(KeyedArray(1:3, AAA=[:x, :y, :z]))
+
+# ╔═╡ e3e1965a-0cb7-4fbc-af83-f055a49bd2d3
+heatmap(KeyedArray(rand(2, 3), x=[:a, :b], y=(1:3)u"km"))
+
 # ╔═╡ b11f3a92-5ddf-4edc-8f96-6d94fc013b6f
 
 
@@ -209,6 +223,7 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 AxisKeysExtra = "b7a0d2b7-1990-46dc-b5dd-87820ecd1b09"
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 RectiGrids = "8ac6971d-971d-971d-971d-971d5ab1a71a"
@@ -233,7 +248,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.3"
 manifest_format = "2.0"
-project_hash = "354bd3d0c488c58eba2a763cfc5738a417fa8031"
+project_hash = "ccb2295d553d644aa87a287a2857184254a30368"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -360,7 +375,7 @@ version = "0.2.14"
 
 [[deps.AxisKeysExtra]]
 deps = ["AxisKeys", "Reexport", "StructArrays"]
-git-tree-sha1 = "daa4686062a9755b048fff95a033e1c50945895d"
+git-tree-sha1 = "d17a957185fe836bb0d1171b617a7f5e90551dc9"
 uuid = "b7a0d2b7-1990-46dc-b5dd-87820ecd1b09"
 version = "0.1.10"
 weakdeps = ["DimensionalData", "Makie", "RectiGrids", "Unitful"]
@@ -1838,6 +1853,7 @@ version = "3.5.0+0"
 # ╟─f4f006af-6e0a-4838-9022-8a4ba9aa75ab
 # ╟─54062c0a-6b3e-46b5-b6b0-bf792647b37b
 # ╠═bc794996-0eec-4cb0-a0b5-0a84da50ad2d
+# ╠═2f09b7ea-8b10-4a77-a655-3b8a1f7ee5fa
 # ╠═1b705f90-ef2b-4b20-bd26-6f66a8ff6605
 # ╠═880f829c-fdfb-11ee-386e-3954ec54a785
 # ╠═939fb93b-86bf-4006-aa6b-952e3a4d0ed7
@@ -1845,6 +1861,9 @@ version = "3.5.0+0"
 # ╠═dce0b608-3d9c-4b11-a9c3-366ce5f54aa4
 # ╠═9e46f4f4-7e03-47a4-9966-6f1eea9c4e39
 # ╠═868e6577-4592-457b-834d-5d99464d527c
+# ╟─2a32c390-6a3c-4218-a64a-8231b1d19fd9
+# ╠═79ac3f5a-d1c7-4086-8a5e-8d746066486b
+# ╠═e3e1965a-0cb7-4fbc-af83-f055a49bd2d3
 # ╟─b11f3a92-5ddf-4edc-8f96-6d94fc013b6f
 # ╟─27406dc2-ca81-4f91-bfd2-df3c1720ff2a
 # ╟─1583641b-540f-4ddd-8c62-a5b7d11f236a
