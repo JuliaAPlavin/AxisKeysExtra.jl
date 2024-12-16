@@ -1,6 +1,7 @@
 using AxisKeysExtra
 using AxisKeys: keyless_unname, keyless
 using StructArrays
+using DimensionalData;
 using Test
 
 
@@ -72,6 +73,14 @@ end
     @test with_axiskeys(findmax)(arr) == (6, (a=0, b=3))
     @test with_axiskeys(argmin)(arr) == (a=-1, b=1)
     @test with_axiskeys(findmin)(arr) == (1, (a=-1, b=1))
+end
+
+@testset "dimensionaldata" begin
+    A = reshape(1:8, (4, 2))
+    DA = DimArray(A, (a=10:10:40, b=[:x, :y]))
+    KA = KeyedArray(DA)
+    @test AxisKeys.keyless_unname(KA) === A
+    @test named_axiskeys(KA) == (a=10:10:40, b=[:x, :y])
 end
 
 
