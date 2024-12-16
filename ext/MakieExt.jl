@@ -73,8 +73,8 @@ for plotf in (plotfs_1d..., plotfs_2d..., plotfs_3d...)
                 ylabel=dimlabel(A[], 2),
             ) : (;),
             ndims(A[]) ≥ 3 ? (
-                zreversed=signs[2] < 0,
-                zlabel=dimlabel(A[], 2),
+                zreversed=signs[3] < 0,
+                zlabel=dimlabel(A[], 3),
             ) : (;),
             axis,
         )
