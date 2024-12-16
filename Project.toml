@@ -21,7 +21,7 @@ UnitfulExt = "Unitful"
 
 [compat]
 AxisKeys = "0.2.12"
-DimensionalData = "0.26"
+DimensionalData = "0.23, 0.24, 0.25, 0.26"
 Makie = "0.20"
 RectiGrids = "0.1.14"
 Reexport = "1.2.2"
