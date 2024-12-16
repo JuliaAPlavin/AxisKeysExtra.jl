@@ -13,6 +13,9 @@ using StructArrays
 # ╔═╡ 6409c897-9e19-47e0-9558-d0a4bd0470b1
 using Skipper
 
+# ╔═╡ 34965aed-6718-4153-8409-9fa403f67639
+using RectiGrids
+
 # ╔═╡ f65897e0-1195-4ecd-a27b-1487884d9efa
 using DimensionalData
 
@@ -108,19 +111,27 @@ with_axiskeys(findmax)(skip(x -> x > 100, KA))
 
 # ╔═╡ 36bd6b03-1467-4945-8625-5a61abb39b08
 md"""
-The `axiskeys_grid()` function is similar to `CartesianIndices()` but returns a grid of `axiskeys` values instead of regular array indices:
+The `with_axiskeys(grid)` function is similar to `CartesianIndices()` but returns a grid of `axiskeys` values instead of regular array indices:
 """
 
 # ╔═╡ 0fc14760-ad8c-4b48-9e48-549584a9834d
 CartesianIndices(KA)
 
-# ╔═╡ 87413954-4d02-4826-9ac6-0b56a267c0c2
-axiskeys_grid(KA)
+# ╔═╡ 02a933ed-8b74-450a-a9dd-cfcb720fc9e8
+with_axiskeys(grid)(KA)
 
 # ╔═╡ 053cb7a5-5266-4806-b8cc-24ff8c20e64e
 md"""
-Same as `CartesianIndices`, the `axiskeys_grid` is lazy: it returns a grid object from [`RectiGrids.jl`](https://github.com/JuliaAPlavin/RectiGrids.jl).
+Same as `CartesianIndices` and `grid`, the `with_axiskeys(grid)` is lazy: it returns a grid object from [`RectiGrids.jl`](https://github.com/JuliaAPlavin/RectiGrids.jl).
 """
+
+# ╔═╡ ca0e8a91-f456-4491-a694-8d7001235f20
+md"""
+Also, `with_axiskeys()` applied to a `KeyedArray` is similar to `pairs()`, but with axiskeys instead of regular indices:
+"""
+
+# ╔═╡ 87413954-4d02-4826-9ac6-0b56a267c0c2
+with_axiskeys(KA)
 
 # ╔═╡ dd27c83e-9d9f-4996-8d13-2d8aa34af606
 md"""
@@ -200,6 +211,7 @@ AxisKeysExtra = "b7a0d2b7-1990-46dc-b5dd-87820ecd1b09"
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+RectiGrids = "8ac6971d-971d-971d-971d-971d5ab1a71a"
 Skipper = "fc65d762-6112-4b1c-b428-ad0792653d81"
 StructArrays = "09ab397b-f2b6-538f-b94a-2f83cf4a842a"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
@@ -209,6 +221,7 @@ AxisKeysExtra = "~0.1.9"
 CairoMakie = "~0.11.10"
 DimensionalData = "~0.27.2"
 PlutoUI = "~0.7.59"
+RectiGrids = "~0.1.18"
 Skipper = "~0.1.12"
 StructArrays = "~0.6.18"
 Unitful = "~1.19.0"
@@ -220,7 +233,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.3"
 manifest_format = "2.0"
-project_hash = "dda63b1e381ffa264fa026b16e27d14c8be7a498"
+project_hash = "9745e342ef83b15ebd0523174efcef2d42729a53"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -351,15 +364,16 @@ version = "0.2.14"
     StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [[deps.AxisKeysExtra]]
-deps = ["AxisKeys", "RectiGrids", "Reexport", "StructArrays"]
-git-tree-sha1 = "181231577f8082a64a8cf720429a23ca4c2c082d"
+deps = ["AxisKeys", "Reexport", "StructArrays"]
+git-tree-sha1 = "ace553dbb6107dff1f96b9d18e5f1688804ceeb0"
 uuid = "b7a0d2b7-1990-46dc-b5dd-87820ecd1b09"
 version = "0.1.9"
-weakdeps = ["DimensionalData", "Makie", "Unitful"]
+weakdeps = ["DimensionalData", "Makie", "RectiGrids", "Unitful"]
 
     [deps.AxisKeysExtra.extensions]
     DimensionalDataExt = "DimensionalData"
     MakieExt = "Makie"
+    RectiGridsExt = "RectiGrids"
     UnitfulExt = "Unitful"
 
 [[deps.Base64]]
@@ -1983,9 +1997,12 @@ version = "3.5.0+0"
 # ╠═6409c897-9e19-47e0-9558-d0a4bd0470b1
 # ╠═d53f7c7a-cd44-48e0-8723-fd15d1feb740
 # ╟─36bd6b03-1467-4945-8625-5a61abb39b08
+# ╠═34965aed-6718-4153-8409-9fa403f67639
 # ╠═0fc14760-ad8c-4b48-9e48-549584a9834d
-# ╠═87413954-4d02-4826-9ac6-0b56a267c0c2
+# ╠═02a933ed-8b74-450a-a9dd-cfcb720fc9e8
 # ╟─053cb7a5-5266-4806-b8cc-24ff8c20e64e
+# ╟─ca0e8a91-f456-4491-a694-8d7001235f20
+# ╠═87413954-4d02-4826-9ac6-0b56a267c0c2
 # ╟─dd27c83e-9d9f-4996-8d13-2d8aa34af606
 # ╠═f65897e0-1195-4ecd-a27b-1487884d9efa
 # ╟─6bd7be6d-d8a1-4d7e-a4e8-9b4d803b5773
