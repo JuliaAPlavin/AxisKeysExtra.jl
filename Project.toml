@@ -1,7 +1,7 @@
 name = "AxisKeysExtra"
 uuid = "b7a0d2b7-1990-46dc-b5dd-87820ecd1b09"
 authors = ["Alexander Plavin <alexander@plav.in>"]
-version = "0.1.9"
+version = "0.1.10"
 
 [deps]
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
