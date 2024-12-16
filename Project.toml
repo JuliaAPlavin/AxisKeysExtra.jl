@@ -1,7 +1,7 @@
 name = "AxisKeysExtra"
 uuid = "b7a0d2b7-1990-46dc-b5dd-87820ecd1b09"
 authors = ["Alexander Plavin <alexander@plav.in>"]
-version = "0.1.9"
+version = "0.1.11"
 
 [deps]
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
@@ -23,7 +23,7 @@ UnitfulExt = "Unitful"
 [compat]
 AxisKeys = "0.2.12"
 DimensionalData = "0.23, 0.24, 0.25, 0.26, 0.27"
-Makie = "0.20"
+Makie = "0.21.2"
 RectiGrids = "0.1.14"
 Reexport = "1.2.2"
 StructArrays = "0.6.12"
