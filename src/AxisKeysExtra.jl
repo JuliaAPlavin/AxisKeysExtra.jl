@@ -11,14 +11,12 @@ export axiskeys_grid, with_axiskeys, dimlabel
 include("structarrays.jl")
 include("functions.jl")
 
-__precompile__(false)  # because of method overwriting
 
-
-# https://github.com/mcabbott/AxisKeys.jl/pull/110
+# basically https://github.com/mcabbott/AxisKeys.jl/pull/110
 NdaKa{L,T,N} = NamedDimsArray{L,T,N,<:KeyedArray{T,N}}
 KaNda{L,T,N} = KeyedArray{T,N,<:NamedDimsArray{L,T,N}}
-Base.@propagate_inbounds (A::KaNda)(c=nothing; kw...) = AxisKeys.getkey(A, c; kw...)
-Base.@propagate_inbounds (A::NdaKa)(c=nothing; kw...) = AxisKeys.getkey(A, c; kw...)
+Base.@propagate_inbounds (A::KaNda)(c::Colon; kw...) = AxisKeys.getkey(A, c; kw...)
+Base.@propagate_inbounds (A::NdaKa)(c::Colon; kw...) = AxisKeys.getkey(A, c; kw...)
 Base.@propagate_inbounds function AxisKeys.getkey(A, c::Union{Nothing, Colon}; kw...)
     list = dimnames(A)
     issubset(keys(kw), list) || error("some keywords not in list of names!")
