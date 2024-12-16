@@ -1,18 +1,17 @@
-using AxisKeysExtra
-using AxisKeys: keyless_unname, keyless
-using StructArrays
-using DimensionalData;
-using Test
+using TestItems
+using TestItemRunner
+@run_package_tests
 
-
-@testset begin
+@testitem "new indexing" begin
     # https://github.com/mcabbott/AxisKeys.jl/pull/110
     A = KeyedArray([1 2 3; 4 5 6], a=-1:0, b=1:3)
     A(a=0, b=1, :) .= 1000
     @test A(a=0, b=1) == 1000
 end
 
-@testset "structarrays" begin
+@testitem "structarrays" begin
+    using StructArrays
+
     A = StructArray(a=KeyedArray(1:5; x=11:15), b=KeyedArray(10:10:50; x=11:15))
     @test named_axiskeys(A) === (x=11:15,)
     @test A.a == 1:5
@@ -35,7 +34,7 @@ end
     @test A(x=:x, y=11).a == 1
 end
 
-@testset "axiskeys grid" begin
+@testitem "axiskeys grid" begin
     A = KeyedArray([1 2 3; 4 5 6], a=-1:0, b=1:3)
     ak_g = axiskeys_grid(A)
     @test ak_g isa AxisKeysExtra.RectiGrid
@@ -66,7 +65,7 @@ end
     @test_broken filter!(p -> p[1].a >= 3, w_ak) === w_ak
 end
 
-@testset "with_axiskeys funcs" begin
+@testitem "with_axiskeys funcs" begin
     arr = KeyedArray([1 2 3; 4 5 6], a=-1:0, b=1:3)
 
     @test with_axiskeys(argmax)(arr) == (a=0, b=3)
@@ -75,7 +74,9 @@ end
     @test with_axiskeys(findmin)(arr) == (1, (a=-1, b=1))
 end
 
-@testset "dimensionaldata" begin
+@testitem "dimensionaldata" begin
+    using DimensionalData
+
     A = reshape(1:8, (4, 2))
     DA = DimArray(A, (a=10:10:40, b=[:x, :y]))
     KA = KeyedArray(DA)
@@ -83,10 +84,11 @@ end
     @test named_axiskeys(KA) == (a=10:10:40, b=[:x, :y])
 end
 
+@testitem "_" begin
+    import CompatHelperLocal as CHL
+    CHL.@check()
 
-import CompatHelperLocal as CHL
-CHL.@check()
-
-import Aqua
-Aqua.test_ambiguities(AxisKeysExtra; recursive=false)
-Aqua.test_all(AxisKeysExtra; ambiguities=false, piracies=false, undefined_exports=false, persistent_tasks=false)
+    import Aqua
+    Aqua.test_ambiguities(AxisKeysExtra; recursive=false)
+    Aqua.test_all(AxisKeysExtra; ambiguities=false, piracies=false, undefined_exports=false, persistent_tasks=false)
+end
