@@ -105,7 +105,7 @@ function default_axis_attributes(plot::Union{
         Arrows{<:Tuple{AbstractMatrix, KeyedArray}},
     })
     A = plot[2] isa Observable{<:KeyedArray} ? plot[2] : plot[3]
-    use_dataaspect = @lift allequal(map(eltype, axiskeys($A)))
+    use_dataaspect = @lift have_same_units(axiskeys($A))
     merge(
         use_dataaspect[] ? (;aspect=DataAspect()) : (;),
         (
@@ -123,7 +123,7 @@ function default_axis_attributes(plot::Union{
         Voxels{<:Tuple{Any,Any,Any,KeyedArray}},
     })
     A = plot[4]
-    use_dataaspect = @lift allequal(map(eltype, axiskeys($A)))
+    use_dataaspect = @lift have_same_units(axiskeys($A))
 #     dataaspect = N == 3 || T ∈ (Surface, Wireframe) ? :data : DataAspect()
     merge(
         use_dataaspect[] ? (;aspect=DataAspect()) : (;),
@@ -165,5 +165,9 @@ should_update_value(ax::Axis3, k::Val{:ylabel}) = String(getproperty(ax, val(k))
 should_update_value(ax::Axis3, k::Val{:zlabel}) = String(getproperty(ax, val(k))[]) ∈ ("", "z")
 
 val(::Val{x}) where {x} = x
+
+have_same_units(aks) = 
+    all(ak -> eltype(ak) <: Real, aks) ? false :  # Real => not Unitful
+    allequal(map(eltype, aks))  # Unitful or other non-Real - assume Unitful; Makie only directly supports Real, so if anything else gets passed it will error anyway
 
 end
