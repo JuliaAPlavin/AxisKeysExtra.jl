@@ -84,6 +84,45 @@ end
     @test named_axiskeys(KA) == (a=10:10:40, b=[:x, :y])
 end
 
+@testitem "Makie" begin
+    # smoke tests only
+    using Makie
+    using Unitful
+
+    KA = KeyedArray([1 2 3; 4 5 6], a=-10:10:0, b=1:3)
+    KAu = KeyedArray([1 2 3; 4 5 6]u"m", a=(-10:10:0)u"s", b=(1:3)u"W")
+    KA_2d = tuple.(KA, KA)
+
+    fig = Figure()
+
+    @testset for plotf in (:heatmap, :image, :contour, :contourf)
+        plotf_excl = Symbol(plotf, :!)
+
+        @eval $plotf(KA)
+        @eval $plotf(fig[1,1], KA)
+        @eval $plotf_excl(KA)
+
+        @eval $plotf(KAu)
+        @eval $plotf(fig[1,1], KAu)
+        @eval $plotf_excl(KAu)
+
+        @eval $plotf(Observable(KA))
+        @eval $plotf(fig[1,1], Observable(KA))
+        @eval $plotf_excl(Observable(KA))
+    end
+    @testset for plotf in (:arrows,)
+        plotf_excl = Symbol(plotf, :!)
+
+        @eval $plotf(KA_2d)
+        @eval $plotf(fig[1,1], KA_2d)
+        @eval $plotf_excl(KA_2d)
+
+        @eval $plotf(Observable(KA_2d))
+        @eval $plotf(fig[1,1], Observable(KA_2d))
+        @eval $plotf_excl(Observable(KA_2d))
+    end
+end
+
 @testitem "_" begin
     import CompatHelperLocal as CHL
     CHL.@check()

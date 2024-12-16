@@ -11,3 +11,7 @@ with_axiskeys(f::Union{typeof.((findmax, findmin))...}) = A -> let
 end
 
 ix_to_axiskeys(A, ix) = NamedTuple{dimnames(A)}(map((i, vs) -> vs[i], Tuple(ix), axiskeys(A)))
+
+
+dimlabel(A, i) = _dimlabel(dimnames(A, i), axiskeys(A, i))
+_dimlabel(dimname, _) = "$dimname"

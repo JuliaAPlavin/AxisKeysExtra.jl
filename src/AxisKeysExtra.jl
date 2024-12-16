@@ -6,7 +6,7 @@ using RectiGrids
 using StructArrays
 using StructArrays: component, components
 
-export axiskeys_grid, with_axiskeys
+export axiskeys_grid, with_axiskeys, dimlabel
 
 include("structarrays.jl")
 include("functions.jl")
@@ -25,5 +25,8 @@ Base.@propagate_inbounds function AxisKeys.getkey(A, c::Union{Nothing, Colon}; k
     args = map(s -> Base.sym_in(s, keys(kw)) ? getfield(values(kw), s) : Colon(), list)
     isnothing(c) ? A(args...) : A(args..., c)
 end
+
+
+_ustrip(x) = x
 
 end
