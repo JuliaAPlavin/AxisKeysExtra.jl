@@ -26,12 +26,13 @@ convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
     convert_arguments(ct, Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))') |> vec, keyless_unname(x) |> _ustrip |> vec)
 
 # also make sense:
-# 1d: band, barplot, errorbars, lines, rangebars, scatter, scatterlines, stairs, stem,
 # 2d: contour3d, surface, tricontourf, wireframe
 # 3d: volume, volumeslices
-for plotf in (:heatmap, :image, :contour, :contourf, :arrows)
+plotfs_1d = (:scatter, :lines, :scatterlines, :band, :errorbars, :rangebars, :stairs, :stem, :barplot)
+plotfs_2d = (:heatmap, :image, :contour, :contourf, :arrows)
+for plotf in (plotfs_1d..., plotfs_2d...)
     plotf_excl = Symbol(plotf, :!)
-    KA_TYPE = KeyedArray{<:Any,2}
+    KA_TYPE = KeyedArray{<:Any, plotf in plotfs_2d ? 2 : 1}
 
     @eval function Makie.$plotf(A::Observable{<:$KA_TYPE}; figure=(;), kwargs...)
         fig = Figure(; figure...)
@@ -56,11 +57,13 @@ for plotf in (:heatmap, :image, :contour, :contourf, :arrows)
             allequal(map(eltype, akeys)) ? (aspect=DataAspect(),) : (;),
             (
                 xreversed=signs[1] < 0,
-                yreversed=signs[2] < 0,
                 xlabel=dimlabel(A[], 1),
-                ylabel=dimlabel(A[], 2)
             ),
-            axis
+            ndims(A[]) ≥ 2 ? (
+                yreversed=signs[2] < 0,
+                ylabel=dimlabel(A[], 2),
+            ) : (;),
+            axis,
         )
         ax = Axis(pos; ax_kwargs...)
         plt = $plotf_excl(ax, A; kwargs...)

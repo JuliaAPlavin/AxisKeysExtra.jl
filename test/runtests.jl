@@ -87,6 +87,7 @@ end
 @testitem "Makie" begin
     # smoke tests only
     using Makie
+    using Makie.IntervalSets
     using Unitful
 
     KA = KeyedArray([1 2 3; 4 5 6], a=-10:10:0, b=1:3)
@@ -130,6 +131,32 @@ end
         @eval $plotf(fig[1,1], KA_nonunif)
         @eval $plotf_excl(KA_nonunif)
     end
+
+    KA1d = KeyedArray([1, 5, 2, 1], x=[1, 5, 10, 20]u"km")
+    @testset for plotf in (:scatter, :lines, :scatterlines, :stairs, :stem, :barplot)
+        plotf_excl = Symbol(plotf, :!)
+
+        @eval $plotf(KA1d)
+        @eval $plotf(fig[1,1], KA1d)
+        @eval $plotf_excl(KA1d)
+
+        @eval $plotf(Observable(KA1d))
+        @eval $plotf(fig[1,1], Observable(KA1d))
+        @eval $plotf_excl(Observable(KA1d))
+    end
+    KA1d = KeyedArray(Interval.([1, 5, 2, 1], [1, 5, 2, 1] .+ 1), x=[1, 5, 10, 20]u"km")
+    # waiting for Makie release with my PR https://github.com/MakieOrg/Makie.jl/pull/3695
+    # @testset for plotf in (:band, :errorbars, :rangebars)
+    #     plotf_excl = Symbol(plotf, :!)
+
+    #     @eval $plotf(KA1d)
+    #     @eval $plotf(fig[1,1], KA1d)
+    #     @eval $plotf_excl(KA1d)
+
+    #     @eval $plotf(Observable(KA1d))
+    #     @eval $plotf(fig[1,1], Observable(KA1d))
+    #     @eval $plotf_excl(Observable(KA1d))
+    # end
 end
 
 @testitem "_" begin
