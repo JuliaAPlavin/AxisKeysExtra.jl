@@ -4,7 +4,6 @@ using AxisKeysExtra
 import AxisKeysExtra: _ustrip
 using AxisKeysExtra.AxisKeys: keyless_unname
 using Makie
-import Makie: convert_arguments
 
 
 _ustrip(x::AbstractArray{<:Union{String,Symbol}}) = Categorical(x)
@@ -15,7 +14,7 @@ for T in (PointBased, Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
 end
 
 for T in (Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
-    @eval convert_arguments(ct::$T, x::KeyedArray{<:Any,1}) =
+    @eval Makie.convert_arguments(ct::$T, x::KeyedArray{<:Any,1}) =
         convert_arguments(ct, _ustrip(only(axiskeys(x))), keyless_unname(x) |> _ustrip)
 end
 
@@ -34,10 +33,10 @@ end
 
 Makie.expand_dimensions(ct::GridBased, x::KeyedArray{<:Any,2}) = (_ustrip.(axiskeys(x))..., keyless_unname(x) |> _ustrip)
 
-convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
+Makie.convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
     convert_arguments(ct, Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))') |> vec, keyless_unname(x) |> _ustrip |> vec)
 
-convert_arguments(ct::Type{<:Union{Volume,VolumeSlices}}, x::KeyedArray{<:Any,3}) =
+Makie.convert_arguments(ct::Type{<:Union{Volume,VolumeSlices}}, x::KeyedArray{<:Any,3}) =
     convert_arguments(ct, _ustrip.(axiskeys(x))..., keyless_unname(x) |> _ustrip)
 
 # also make sense for irregular: tricontourf, wireframe
