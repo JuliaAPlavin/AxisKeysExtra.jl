@@ -97,9 +97,7 @@ end
     KA_2d = tuple.(KA, KA)
 
     fig = Figure()
-    @testset for plotf in (:heatmap, :image,)
-        # :contour, :contourf, :contour3d,  # clear bug in Makie, should report
-        #  :surface,)  # seems like Makie bug or Axis3 issues, need MWE
+    @testset for plotf in (:heatmap, :image, :contour, :contourf, :contour3d, :surface)
          # :wireframe  # does it work?
         plotf_excl = Symbol(plotf, :!)
 
@@ -115,8 +113,7 @@ end
         @eval $plotf(fig[1,end+1], Observable(KA))
         @eval $plotf_excl(Observable(KA))
     end
-    
-    fig = Figure()  # XXX: here and below, shouldn't really be needed – but removing results in stackoverflows
+
     @testset for plotf in (:arrows,)
         plotf_excl = Symbol(plotf, :!)
 
@@ -130,9 +127,7 @@ end
     end
 
     KA_nonunif = KeyedArray([1 2 3; 4 5 6], a=-10:10:0, b=[1, 3, 10])
-    fig = Figure()
-    @testset for plotf in (:heatmap,)
-            # :contour, :contourf, :contour3d, :surface)  # :wireframe
+    @testset for plotf in (:heatmap, :contour, :contourf, :contour3d, :surface)  # :wireframe
         plotf_excl = Symbol(plotf, :!)
 
         @eval $plotf(KA_nonunif)
@@ -141,7 +136,6 @@ end
     end
 
     KA1d = KeyedArray([1, 5, 2, 1], x=[1, 5, 10, 20]u"km")
-    fig = Figure()
     @testset for plotf in (:scatter, :lines, :scatterlines, :stairs, :stem, :barplot)
         plotf_excl = Symbol(plotf, :!)
 
