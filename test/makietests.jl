@@ -1,5 +1,4 @@
-# smoke tests only
-@testitem "1d" begin
+@testitem "1d point" begin
     using Makie
     using Makie.IntervalSets
     using Unitful
@@ -31,7 +30,14 @@
             @test current_axis().xlabel[] == xlabel
         end
     end
+end
 
+@testitem "1d interval" begin
+    using Makie
+    using Makie.IntervalSets
+    using Unitful
+
+    fig = Figure()
     KA1d = KeyedArray(Interval.([1, 5, 2, 1], [1, 5, 2, 1] .+ 1), x=[1, 5, 10, 20]u"km")
     @testset for plotf in (band, rangebars)
         xlabel = "x (km)"
@@ -80,7 +86,7 @@ end
     end
 end
 
-@testitem "2d" begin
+@testitem "2d basic" begin
     using Makie
     using Unitful
 
@@ -126,7 +132,15 @@ end
         plotf_excl(KA_nonunif)
         @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
     end
+end
 
+@testitem "2d arrows" begin
+    using Makie
+
+    KA2 = KeyedArray([1 2 3; 4 5 6], a=-10:10:0, b=1:3)
+    KA_2d = tuple.(KA2, KA2)
+
+    fig = Figure()
     @testset for plotf in (arrows,)
         xlabel, ylabel = ("a", "b")
         plotf_excl = @eval $(Symbol(nameof(plotf), :!))
@@ -145,6 +159,28 @@ end
         plotf_excl(Observable(KA_2d))
         @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
     end
+end
+
+@testitem "2d 3d" begin
+    using Makie
+    using Unitful
+
+    KA2s = [
+        KeyedArray([1 2 3; 4 5 6], a=-10:10:0, b=1:3),
+        KeyedArray([1 2 3; 4 5 6]u"m", a=(-10:10:0)u"s", b=(1:3)u"W"),
+    ]
+    fig = Figure()
+    @testset for plotf in (contour3d, surface) # wireframe  # does it work?
+       plotf_excl = @eval $(Symbol(nameof(plotf), :!))
+
+       @testset for KA in KA2s
+           xlabel, ylabel = eltype(axiskeys(KA)[1]) <: Quantity ? ("a (s)", "b (W)") : ("a", "b")
+
+           ax = Axis3(fig[1,end+1])
+           plotf_excl(Observable(KA))
+           @test ax.xlabel[] == xlabel && ax.ylabel[] == ylabel && ax.zlabel[] == "z"
+       end
+   end
 end
 
 @testitem "2d categorical" begin

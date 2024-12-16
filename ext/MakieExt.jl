@@ -8,6 +8,9 @@ using Makie
 
 _ustrip(x::AbstractArray{<:Union{String,Symbol}}) = Categorical(x)
 
+# hack: otherwise need a more involved overload of Makie.numbers_to_colors
+Base.convert(::Type{<:Union{T,Array{T,N}}}, X::KeyedArray{T,N}) where {T<:Makie.Colorant,N} = AxisKeys.keyless_unname(X)::Array{T,N}
+
 
 for T in (PointBased, Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
     @eval Makie.expand_dimensions(::$T, x::KeyedArray) = (_ustrip(only(axiskeys(x))), x |> _ustrip)
@@ -97,8 +100,8 @@ function default_axis_attributes(plot::Union{
         Heatmap{<:Tuple{Any,Any,KeyedArray}},
         Contour{<:Tuple{Any,Any,KeyedArray}},
         Contourf{<:Tuple{Any,Any,KeyedArray}},
-        # Contour3d{<:Tuple{Any,Any,KeyedArray}},
-        # Surface{<:Tuple{Any,Any,KeyedArray}},
+        Contour3d{<:Tuple{Any,Any,KeyedArray}},
+        Surface{<:Tuple{Any,Any,KeyedArray}},
         Arrows{<:Tuple{AbstractMatrix, KeyedArray}},
     })
     A = plot[2] isa Observable{<:KeyedArray} ? plot[2] : plot[3]
