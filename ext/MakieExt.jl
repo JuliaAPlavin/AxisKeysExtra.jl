@@ -1,10 +1,13 @@
 module MakieExt
 
 using AxisKeysExtra
-using AxisKeysExtra: _ustrip
+import AxisKeysExtra: _ustrip
 using AxisKeysExtra.AxisKeys: keyless_unname
 using Makie
 import Makie: convert_arguments
+
+
+_ustrip(x::AbstractArray{<:Union{String,Symbol}}) = Categorical(x)
 
 
 for T in (PointBased, Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
@@ -67,6 +70,7 @@ end
 function default_axis_attributes(T, A::Observable{<:KeyedArray{<:Any,N}}; kwargs...) where {N}
     akeys = @lift axiskeys($A)
     signs = @lift map($akeys) do ak
+        eltype(ak) <: Number || return 1
         d = diff(ak)
         if all(≥(zero(eltype(d))), d)
             1

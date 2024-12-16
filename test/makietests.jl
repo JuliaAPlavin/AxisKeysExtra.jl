@@ -39,6 +39,33 @@
     end
 end
 
+@testitem "1d categorical" begin
+    using Makie
+    using Unitful
+
+    fig = Figure()
+    
+    KA1ds = [
+        KeyedArray(["a", "b", "c", "d"], x=[1, 5, 10, 20]),
+        KeyedArray(["a", "b", "c", "d"], x=[1, 5, 10, 20]u"km"),
+        KeyedArray([1, 5, 10, 20], x=["a", "b", "c", "d"]),
+        KeyedArray([1, 5, 10, 20]u"km", x=["a", "b", "c", "d"]),
+    ]
+    @testset for plotf in (scatter, lines, scatterlines, stairs, stem, barplot)
+        plotf_excl = @eval $(Symbol(nameof(plotf), :!))
+
+        @testset for KA1d in KA1ds
+            plotf(KA1d)
+            plotf(fig[1,end+1], KA1d)
+            plotf_excl(KA1d)
+
+            plotf(Observable(KA1d))
+            plotf(fig[1,end+1], Observable(KA1d))
+            plotf_excl(Observable(KA1d))
+        end
+    end
+end
+
 @testitem "2d" begin
     using Makie
     using Unitful
@@ -84,6 +111,33 @@ end
         plotf(Observable(KA_2d))
         plotf(fig[1,end+1], Observable(KA_2d))
         plotf_excl(Observable(KA_2d))
+    end
+end
+
+@testitem "2d categorical" begin
+    using Makie
+    using Unitful
+
+    fig = Figure()
+
+    KA2s = [
+        KeyedArray([1 2 3; 4 5 6], a=["a", "b"], b=1:3),
+        KeyedArray([1 2 3; 4 5 6], a=["a", "b"], b=["c", "d", "e"]),
+        KeyedArray([1 2 3; 4 5 6]u"m", a=["a", "b"], b=["c", "d", "e"]),
+        KeyedArray([1 2 3; 4 5 6]u"m", a=(1:2)u"km", b=["c", "d", "e"]),
+    ]
+    @testset for plotf in (heatmap,)# image, contour, contourf, contour3d, surface)
+        plotf_excl = @eval $(Symbol(nameof(plotf), :!))
+
+        @testset for KA in KA2s
+            plotf(KA)
+            plotf(fig[1,end+1], KA)
+            plotf_excl(KA)
+
+            plotf(Observable(KA))
+            plotf(fig[1,end+1], Observable(KA))
+            plotf_excl(Observable(KA))
+        end
     end
 end
 
