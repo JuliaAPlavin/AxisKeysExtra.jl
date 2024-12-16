@@ -3,7 +3,7 @@ module DimensionalDataExt
 using AxisKeys
 import DimensionalData
 
-function AxisKeys.KeyedArray(DA::DimensionalData.AbstractDimArray; dimunit=nothing)
+function AxisKeys.KeyedArray(DA::DimensionalData.AbstractDimArray)
     dims = DimensionalData.dims(DA)
     dnames = DimensionalData.label.(dims)
     dvals = DimensionalData.val.(dims)
