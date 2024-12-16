@@ -15,27 +15,41 @@
         plotf_excl = @eval $(Symbol(nameof(plotf), :!))
 
         @testset for KA1d in KA1ds
+            xlabel = eltype(axiskeys(KA1d)[1]) <: Quantity ? "x (km)" : "x"
             plotf(KA1d)
+            @test current_axis().xlabel[] == xlabel
             plotf(fig[1,end+1], KA1d)
+            @test current_axis().xlabel[] == xlabel
             plotf_excl(KA1d)
+            @test current_axis().xlabel[] == xlabel
 
             plotf(Observable(KA1d))
+            @test current_axis().xlabel[] == xlabel
             plotf(fig[1,end+1], Observable(KA1d))
+            @test current_axis().xlabel[] == xlabel
             plotf_excl(Observable(KA1d))
+            @test current_axis().xlabel[] == xlabel
         end
     end
 
     KA1d = KeyedArray(Interval.([1, 5, 2, 1], [1, 5, 2, 1] .+ 1), x=[1, 5, 10, 20]u"km")
     @testset for plotf in (band, rangebars)
+        xlabel = "x (km)"
         plotf_excl = @eval $(Symbol(nameof(plotf), :!))
 
         plotf(KA1d)
+        @test current_axis().xlabel[] == xlabel
         plotf(fig[1,end+1], KA1d)
+        @test current_axis().xlabel[] == xlabel
         plotf_excl(KA1d)
+        @test current_axis().xlabel[] == xlabel
 
         plotf(Observable(KA1d))
+        @test current_axis().xlabel[] == xlabel
         plotf(fig[1,end+1], Observable(KA1d))
+        @test current_axis().xlabel[] == xlabel
         plotf_excl(Observable(KA1d))
+        @test current_axis().xlabel[] == xlabel
     end
 end
 
@@ -83,13 +97,21 @@ end
         plotf_excl = @eval $(Symbol(nameof(plotf), :!))
 
         @testset for KA in KA2s
+            xlabel, ylabel = eltype(axiskeys(KA)[1]) <: Quantity ? ("a (s)", "b (W)") : ("a", "b")
+
             plotf(KA)
+            @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
             plotf(fig[1,end+1], KA)
+            @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
             plotf_excl(KA)
+            @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
 
             plotf(Observable(KA))
+            @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
             plotf(fig[1,end+1], Observable(KA))
+            @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
             plotf_excl(Observable(KA))
+            @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
         end
     end
 
