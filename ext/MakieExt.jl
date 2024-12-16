@@ -147,6 +147,8 @@ Base.fill!(ax::Makie.AbstractAxis, plot::Plot) =
 		upd_ax_attr!(ax, k, v)
 	end
 
+default_axis_attributes(plot) = (;)
+
 upd_ax_attr!(ax::Makie.AbstractAxis, k::Symbol, v) = if should_update_value(ax, k)
 	update_value!(ax, k, v)
 end
