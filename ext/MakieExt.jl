@@ -86,7 +86,7 @@ function Makie.plot!(ax::Makie.AbstractAxis, plot::Union{
     attrs = (axis=default_axis_attributes(plot), plot=default_plot_attributes(plot))
 	PT = typeof(plot)
 	@invoke plot!(ax, plot::supertype(PT))
-	upd_axplt_attrs!(ax, plot, attrs)
+    Base.fill!(ax, plot, attrs)  # pirate Base function for now, so that several packages can avoid depending on each other
 end
 
 
@@ -166,7 +166,8 @@ end
 is_revrange(x::AbstractVector) = false
 is_revrange(x::AbstractRange) = step(x) < zero(step(x))
 
-function upd_axplt_attrs!(ax::Makie.AbstractAxis, plot::Plot, attrs::NamedTuple)
+# pirate Base function for now, so that several packages can avoid depending on each other
+function Base.fill!(ax::Makie.AbstractAxis, plot::Plot, attrs::NamedTuple)
 	for (k, v) in pairs(attrs.axis)
 		upd_axplt_attr!(ax, k, v)
 	end
