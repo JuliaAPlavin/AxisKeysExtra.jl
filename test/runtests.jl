@@ -129,6 +129,7 @@ end
 end
 
 @testitem "Interpolations" begin
+    # TODO: to remove, upstreamed
     using Interpolations
     using StaticArrays
 
