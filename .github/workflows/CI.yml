@@ -15,6 +15,7 @@ jobs:
         julia-version: ['1.10', '1', 'pre']
         arch: [x64]
         os: [ubuntu-latest]
+        makie-version: ['0.22', '0.24']
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
@@ -24,4 +25,5 @@ jobs:
           arch: ${{ matrix.arch }}
       - uses: julia-actions/cache@v2
       - uses: julia-actions/julia-buildpkg@v1
+      - run: julia -e 'using Pkg; pkg"add Makie@${{ matrix.makie-version }}"'
       - uses: julia-actions/julia-runtest@v1
