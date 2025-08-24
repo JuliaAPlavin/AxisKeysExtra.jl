@@ -3,6 +3,9 @@ module GeoMakieExt
 using GeoMakie
 using AxisKeysExtra
 
+const MakieExt = Base.get_extension(AxisKeysExtra, :MakieExt)
+using .MakieExt: upd_axplt_attrs!
+
 
 function Makie.plot!(ax::GeoAxis, plot::Union{
     Image{<:Tuple{Any,Any,KeyedArray}},
@@ -12,7 +15,7 @@ function Makie.plot!(ax::GeoAxis, plot::Union{
 })
     PT = typeof(plot)
     @invoke plot!(ax, plot::supertype(PT))
-    Base.fill!(ax, plot)  # pirate Base function for now, so that several packages can avoid depending on each other
+    upd_axplt_attrs!(ax, plot)
 end
 
 end
