@@ -49,11 +49,15 @@ Makie.expand_dimensions(ct::GridBased, x::KeyedArray{<:Any,2}) = (_ustrip.(axisk
 Makie.expand_dimensions(ct::Union{VertexGrid,CellGrid}, x::KeyedArray{<:Any,2}) = (_ustrip.(axiskeys(x))..., x |> _ustrip)
 
 Makie.convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
-    convert_arguments(ct, Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))'), x |> _ustrip)
+    Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))'), x |> _ustrip
 
-Makie.plot!(p::Arrows{<:Tuple{AbstractMatrix, KeyedArray}}) = arrows!(p, p.attributes, lift(vec, p[1]), lift(vec, p[2]))
+Makie.plot!(p::Arrows{<:Tuple{AbstractMatrix, KeyedArray}}) = arrows2d!(p, p.attributes, lift(vec, p[1]), lift(vec, p[2]))
 
-# Makie._update_voxel(a::KeyedArray, b::KeyedArray, args...) = Makie._update_voxel(keyless_unname(a), keyless_unname(b), args...)
+if isdefined(Makie, :_is_3d_arrows)
+    # Makie 0.24
+    Makie._is_3d_arrows(::Union{KeyedArray{<:Any,2}, Observable{<:KeyedArray{<:Any,2}}}) = false
+    Makie._is_3d_arrows(::Union{KeyedArray{<:Any,3}, Observable{<:KeyedArray{<:Any,3}}}) = true
+end
 
 function Makie.plot!(ax::Makie.AbstractAxis, plot::Union{
         Scatter{<:Tuple{KeyedArray}},
@@ -108,7 +112,7 @@ function default_axis_attributes(plot::Union{
         Surface{<:Tuple{Any,Any,KeyedArray}},
         Arrows{<:Tuple{AbstractMatrix, KeyedArray}},
     })
-    A = plot[2] isa Observable{<:KeyedArray} ? plot[2] : plot[3]
+    A = plot isa Arrows ? plot[2] : plot[3]
     use_dataaspect = @lift have_same_units(axiskeys($A))
     merge(
         use_dataaspect[] ? (;aspect=DataAspect()) : (;),
@@ -188,7 +192,8 @@ should_update_value(ax::Axis3, k::Val{:xlabel}) = String(getproperty(ax, val(k))
 should_update_value(ax::Axis3, k::Val{:ylabel}) = String(getproperty(ax, val(k))[]) ∈ ("", "y")
 should_update_value(ax::Axis3, k::Val{:zlabel}) = String(getproperty(ax, val(k))[]) ∈ ("", "z")
 
-should_update_value(plt, ::Val{:inspector_label}) = plt.inspector_label[] == Makie.Automatic()
+# XXX, see https://github.com/MakieOrg/Makie.jl/issues/5229
+should_update_value(plt, ::Val{:inspector_label}) = true # plt.inspector_label[] == Makie.Automatic()
 
 val(::Val{x}) where {x} = x
 
