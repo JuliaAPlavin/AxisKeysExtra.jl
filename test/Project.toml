@@ -1,9 +1,11 @@
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 CompatHelperLocal = "5224ae11-6099-4aaa-941d-3aab004bd678"
 ComradeBase = "6d8c423b-a35f-4ef1-850c-862fe21f82c4"
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
+GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 GeoMakie = "db073c08-6b98-4ee5-b6a4-5efafb3259c6"
 Interpolations = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
@@ -18,7 +20,7 @@ VLBISkyModels = "d6343c73-7174-4e0f-bb64-562643efbeca"
 
 [compat]
 Aqua = "0.8"
-AxisKeys = "0.2.7"
+AxisKeys = "0.2.17"
 CompatHelperLocal = "0.1.24"
 Makie = "0.22, 0.24"
 RectiGrids = "0.1.14"
