@@ -137,7 +137,7 @@ end
         KeyedArray([3 2 1; 6 5 4], a=-1:0, b=3:-1:1) => BSpline(Linear()),
         KeyedArray([1 2 3; 4 5 6], a=-1:0, b=1:3) => Gridded(Linear()),
         KeyedArray([3 2 1; 6 5 4], a=-1:0, b=3:-1:1) => Gridded(Linear()),
-        KeyedArray([1 2 3; 4 5 6], a=-1:0, b=[1,2,3]) => Gridded(Linear()),
+        KeyedArray([1 2 4; 4 5 7], a=-1:0, b=[1,2,4]) => Gridded(Linear()),
     ]
         @testset for Ai in [interpolate(A, it), linear_interpolation(A)]
             @test issetequal(dimnames(Ai), dimnames(A))
