@@ -51,7 +51,7 @@ end
         backend.activate!()
 
         fig = Figure()
-        KA1d = KeyedArray(Interval.([1, 5, 2, 1], [1, 5, 2, 1] .+ 1), x=[1, 5, 10, 20]u"km")
+        KA1d = KeyedArray(Interval.([1, 5, 2, 1], [1, 5, 2, 1] .+ 1), x=[1., 5, 10, 20]u"km")
         @testset for plotf in (band, rangebars)
             xlabel = "x (km)"
             plotf_excl = @eval $(Symbol(nameof(plotf), :!))
