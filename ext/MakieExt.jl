@@ -83,9 +83,10 @@ function Makie.plot!(ax::Makie.AbstractAxis, plot::Union{
         VolumeSlices{<:Tuple{Any,Any,Any,KeyedArray}},
         Voxels{<:Tuple{Any,Any,Any,KeyedArray}},
     })
+    attrs = (axis=default_axis_attributes(plot), plot=default_plot_attributes(plot))
 	PT = typeof(plot)
 	@invoke plot!(ax, plot::supertype(PT))
-	upd_axplt_attrs!(ax, plot)
+	upd_axplt_attrs!(ax, plot, attrs)
 end
 
 
@@ -165,11 +166,11 @@ end
 is_revrange(x::AbstractVector) = false
 is_revrange(x::AbstractRange) = step(x) < zero(step(x))
 
-function upd_axplt_attrs!(ax::Makie.AbstractAxis, plot::Plot)
-	for (k, v) in pairs(default_axis_attributes(plot))
+function upd_axplt_attrs!(ax::Makie.AbstractAxis, plot::Plot, attrs::NamedTuple)
+	for (k, v) in pairs(attrs.axis)
 		upd_axplt_attr!(ax, k, v)
 	end
-	for (k, v) in pairs(default_plot_attributes(plot))
+	for (k, v) in pairs(attrs.plot)
 		upd_axplt_attr!(plot, k, v)
 	end
 end
