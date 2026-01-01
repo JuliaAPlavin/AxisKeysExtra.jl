@@ -22,7 +22,7 @@ VLBISkyModels = "d6343c73-7174-4e0f-bb64-562643efbeca"
 [extensions]
 ComradeBaseExt = ["ComradeBase", "Unitful"]
 DimensionalDataExt = "DimensionalData"
-GeoMakieExt = "GeoMakie"
+GeoMakieExt = ["GeoMakie", "Makie"]
 InterpolationsExt = "Interpolations"
 MakieExt = "Makie"
 RectiGridsExt = "RectiGrids"
