@@ -92,6 +92,8 @@ end
 
     KA2s = [
         KeyedArray([1 2 3; 4 5 6], a=-10:10:0, b=1:3),
+        KeyedArray([1 2 3; 4 5 6], a=10:-10:0, b=1:3),
+        KeyedArray([1 2 3; 4 5 6], a=10:-10:0, b=3:-1:1),
         KeyedArray([1 2 3; 4 5 6]u"m", a=(-10:10:0)u"s", b=(1:3)u"W"),
     ]
     KA_2d = tuple.(KA2s[1], KA2s[1])

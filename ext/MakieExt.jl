@@ -26,12 +26,8 @@ end
 
 function Makie.expand_dimensions(ct::ImageLike, x::KeyedArray{<:Any,2})
     aks = axiskeys(x)
-    edges = map(ak -> _ustrip.(extrema(ak) .+ (-step(ak)/2, step(ak)/2)), aks)
-    if step(aks[1]) < zero(step(aks[1]))
-        x = reverse(x, dims=1)
-    end
-    if step(aks[2]) < zero(step(aks[2]))
-        x = reverse(x, dims=2)
+    edges = map(aks) do ak
+        _ustrip.((first(ak), last(ak)) .+ (-step(ak)/2, +step(ak)/2))
     end
     (edges..., x |> _ustrip)
 end
