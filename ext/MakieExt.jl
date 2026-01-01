@@ -23,13 +23,22 @@ for T in (Type{<:Errorbars}, Type{<:Rangebars}, Type{<:Band})
         convert_arguments(ct, _ustrip(only(axiskeys(x))), x |> _ustrip)
 end
 
-
+# two functions that are basically the same
+# for some reason, ImageLike requires expand_dimensions, while Volume requires convert_arguments
 function Makie.expand_dimensions(ct::ImageLike, x::KeyedArray{<:Any,2})
     aks = axiskeys(x)
     edges = map(aks) do ak
         _ustrip.((first(ak), last(ak)) .+ (-step(ak)/2, +step(ak)/2))
     end
     (edges..., x |> _ustrip)
+end
+
+function Makie.convert_arguments(ct::Type{<:Union{Volume,VolumeSlices,Voxels}}, x::KeyedArray{<:Any,3})
+    aks = axiskeys(x)
+    edges = map(aks) do ak
+        _ustrip.((first(ak), last(ak)) .+ (-step(ak)/2, +step(ak)/2))
+    end
+    convert_arguments(ct, edges..., x |> _ustrip)
 end
 
 Makie.Isoband.isobands(xs::AbstractVector, ys::AbstractVector, zs::KeyedArray, lows::AbstractVector, highs::AbstractVector) =
@@ -43,9 +52,6 @@ Makie.convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
     convert_arguments(ct, Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))'), x |> _ustrip)
 
 Makie.plot!(p::Arrows{<:Tuple{AbstractMatrix, KeyedArray}}) = arrows!(p, p.attributes, lift(vec, p[1]), lift(vec, p[2]))
-
-Makie.convert_arguments(ct::Type{<:Union{Volume,VolumeSlices,Voxels}}, x::KeyedArray{<:Any,3}) =
-    convert_arguments(ct, _ustrip.(axiskeys(x))..., x |> _ustrip)
 
 Makie._update_voxel(a::KeyedArray, b::KeyedArray, args...) = Makie._update_voxel(keyless_unname(a), keyless_unname(b), args...)
 

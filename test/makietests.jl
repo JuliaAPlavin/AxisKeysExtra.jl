@@ -229,8 +229,8 @@ end
     using Unitful
 
     KA3ds = [
-        KeyedArray(reshape(1:12, (2, 3, 2)) |> collect, a=-10:10:0, b=1:3, c=[5, 7]u"km"),
-        KeyedArray(reshape(1:12, (2, 3, 2)) |> collect, a=-10:10:0, b=1:3, c=[5, 7]),
+        KeyedArray(reshape(1:12, (2, 3, 2)) |> collect, a=-10:10:0, b=1:3, c=(5:2:7)u"km"),
+        KeyedArray(reshape(1:12, (2, 3, 2)) |> collect, a=-10:10:0, b=1:3, c=5:2:7),
     ]
     @testset for plotf in (volume, volumeslices)
         fig = Figure()
@@ -248,7 +248,7 @@ end
 
             ax = Axis3(fig[1,end+1])
             plotf_excl(KA3d)
-            @test ax.xlabel[] == "a"# && ax.ylabel[] == "b" && ax.zlabel[] ∈ ("c", "c (km)")
+            @test ax.xlabel[] == "a" && ax.ylabel[] == "b" && ax.zlabel[] ∈ ("c", "c (km)")
         end
     end
 end
