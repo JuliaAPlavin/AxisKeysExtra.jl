@@ -40,20 +40,20 @@ end
 
 Interpolations.extrapolate(A::KeyedInterpolation, et) = KeyedInterpolation(dimnames(A), extrapolate(A.interpolation, et))
 
-(ki::KeyedInterpolation)(args::Vararg{Number}) = ki.interpolation(args...)
-(ki::KeyedInterpolation)(args::NTuple{<:Any, Number}) = ki.interpolation(args...)
-(ki::KeyedInterpolation)(args::SVector) = ki.interpolation(args...)
-(ki::KeyedInterpolation)(args::NamedTuple) = ki.interpolation(args[dimnames(ki)]...)
-(ki::KeyedInterpolation)(;args...) = ki(NamedTuple(args))
+Base.@propagate_inbounds (ki::KeyedInterpolation)(args::Vararg{Number}) = ki.interpolation(args...)
+Base.@propagate_inbounds (ki::KeyedInterpolation)(args::NTuple{<:Any, Number}) = ki.interpolation(args...)
+Base.@propagate_inbounds (ki::KeyedInterpolation)(args::SVector) = ki.interpolation(args...)
+Base.@propagate_inbounds (ki::KeyedInterpolation)(args::NamedTuple) = ki.interpolation(args[dimnames(ki)]...)
+Base.@propagate_inbounds (ki::KeyedInterpolation)(;args...) = ki(NamedTuple(args))
 
-Interpolations.gradient(ki::KeyedInterpolation, args::Vararg{Number}) = Interpolations.gradient(ki.interpolation, args...)
-Interpolations.gradient(ki::KeyedInterpolation, args::NTuple{<:Any, Number}) = Interpolations.gradient(ki.interpolation, args...)
-Interpolations.gradient(ki::KeyedInterpolation, args::SVector) = Interpolations.gradient(ki.interpolation, args...)
-function Interpolations.gradient(ki::KeyedInterpolation, args::NamedTuple)  
+Base.@propagate_inbounds Interpolations.gradient(ki::KeyedInterpolation, args::Vararg{Number}) = Interpolations.gradient(ki.interpolation, args...)
+Base.@propagate_inbounds Interpolations.gradient(ki::KeyedInterpolation, args::NTuple{<:Any, Number}) = Interpolations.gradient(ki.interpolation, args...)
+Base.@propagate_inbounds Interpolations.gradient(ki::KeyedInterpolation, args::SVector) = Interpolations.gradient(ki.interpolation, args...)
+Base.@propagate_inbounds function Interpolations.gradient(ki::KeyedInterpolation, args::NamedTuple)  
     keys(args) == dimnames(ki) || throw(ArgumentError("KeyedInterpolation gradient requires keys $(dimnames(ki)) but got $(keys(args))"))
     Interpolations.gradient(ki.interpolation, args...)
 end
-Interpolations.gradient(ki::KeyedInterpolation; args...) = Interpolations.gradient(ki.interpolation, args[dimnames(ki)]...)
+Base.@propagate_inbounds Interpolations.gradient(ki::KeyedInterpolation; args...) = Interpolations.gradient(ki.interpolation, args[dimnames(ki)]...)
 
 AxisKeys.axiskeys(ki::KeyedInterpolation) = Interpolations.getknots(ki.interpolation)
 AxisKeys.named_axiskeys(ki::KeyedInterpolation) = NamedTuple{dimnames(ki)}(axiskeys(ki))
