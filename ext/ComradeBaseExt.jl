@@ -11,7 +11,6 @@ AxisKeys.KeyedArray(im::ComradeBase.IntensityMap) = @p let
 	KeyedArray(AxisKeys.keyless_unname(__); map(named_axiskeys(__)) do ak
 		(ak.data * u"rad")::AbstractRange
 	end...)
-	reverse(dims=1)
 end
 
 ComradeBase.IntensityMap(img::KeyedArray) =

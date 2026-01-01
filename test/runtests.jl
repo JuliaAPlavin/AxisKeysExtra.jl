@@ -101,18 +101,22 @@ end
     data = rand(128, 128)
     imap = IntensityMap(data, 12.8, 25.6; header=ComradeBase.NoHeader())
     KA = KeyedArray(imap)
-    @test AxisKeys.keyless_unname(KA) == reverse(data; dims=1)
-    @test named_axiskeys(KA).X::AbstractRange ≈ (6.35:-0.1:-6.35)u"rad"
+    @test AxisKeys.keyless_unname(KA) == data
+    @test named_axiskeys(KA).X::AbstractRange ≈ (-6.35:0.1:6.35)u"rad"
     @test named_axiskeys(KA).Y::AbstractRange ≈ (-12.7:0.2:12.7)u"rad"
 
     imap = IntensityMap(KA)
-    @test imap.X ≈ 6.35:-0.1:-6.35
+    @test imap.X ≈ -6.35:0.1:6.35
 
     KA_d = KeyedArray(AxisKeys.keyless_unname(KA); map(named_axiskeys(KA)) do ak
         ak .|> u"°"
     end...)
     imap = IntensityMap(KA_d)
-    @test imap.X ≈ 6.35:-0.1:-6.35
+    @test imap.X ≈ -6.35:0.1:6.35
+
+    KA2 = KeyedArray(imap)
+    @test all(axiskeys(KA2) .≈ axiskeys(KA))
+    @test AxisKeys.keyless_unname(KA2) == AxisKeys.keyless_unname(KA)
 end
 
 @testitem "Interpolations" begin
