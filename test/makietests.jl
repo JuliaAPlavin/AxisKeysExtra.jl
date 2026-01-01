@@ -111,8 +111,9 @@ end
             @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
             plotf(fig[1,end+1], KA)
             @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
-            plotf_excl(KA)
+            plt = plotf_excl(KA)
             @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel
+            plotf in (heatmap, image) && @test plt.inspector_label[] != Makie.Automatic()
 
             plotf(Observable(KA))
             @test current_axis().xlabel[] == xlabel && current_axis().ylabel[] == ylabel

@@ -115,6 +115,22 @@ function default_axis_attributes(plot::Union{
     )
 end
 
+function default_plot_attributes(plot::Union{
+        Image{<:Tuple{Any,Any,KeyedArray}},
+        Heatmap{<:Tuple{Any,Any,KeyedArray}},
+    })
+    A_obs = plot[3]
+    (;inspector_label=function(plot, index, position)
+        A = A_obs[]
+		index_int = round.(Int, index)  # XXX: interpolate if non-integer?
+		ak_strs = map(dimnames(A), axiskeys(A), index_int) do n, aks, i
+			Makie.@sprintf "%s=%.2g" n aks[i]
+		end
+		"A($(join(ak_strs, ", "))) = $(Makie.color2text(A[index_int...]))"
+		# XXX: default Makie tooltip shows different names for heatmap/image
+	end)
+end
+
 function default_axis_attributes(plot::Union{
         Volume{<:Tuple{Any,Any,Any,KeyedArray}},
         VolumeSlices{<:Tuple{Any,Any,Any,KeyedArray}},
@@ -140,15 +156,20 @@ is_revrange(x::AbstractVector) = false
 is_revrange(x::AbstractRange) = step(x) < zero(step(x))
 
 # pirate Base function for now, so that several packages can avoid depending on each other
-Base.fill!(ax::Makie.AbstractAxis, plot::Plot) =
+function Base.fill!(ax::Makie.AbstractAxis, plot::Plot)
 	for (k, v) in pairs(default_axis_attributes(plot))
-		upd_ax_attr!(ax, k, v)
+		upd_axplt_attr!(ax, k, v)
 	end
+	for (k, v) in pairs(default_plot_attributes(plot))
+		upd_axplt_attr!(plot, k, v)
+	end
+end
 
 default_axis_attributes(plot) = (;)
+default_plot_attributes(plot) = (;)
 
-upd_ax_attr!(ax::Makie.AbstractAxis, k::Symbol, v) = if should_update_value(ax, k)
-	update_value!(ax, k, v)
+upd_axplt_attr!(axplt, k::Symbol, v) = if should_update_value(axplt, k)
+	update_value!(axplt, k, v)
 end
 
 update_value!(ax, k::Symbol, v::Observable) = map!(identity, getproperty(ax, k), v)
@@ -161,6 +182,8 @@ should_update_value(ax, k::Union{Val{:xlabel}, Val{:ylabel}, Val{:zlabel}}) = is
 should_update_value(ax::Axis3, k::Val{:xlabel}) = String(getproperty(ax, val(k))[]) ∈ ("", "x")
 should_update_value(ax::Axis3, k::Val{:ylabel}) = String(getproperty(ax, val(k))[]) ∈ ("", "y")
 should_update_value(ax::Axis3, k::Val{:zlabel}) = String(getproperty(ax, val(k))[]) ∈ ("", "z")
+
+should_update_value(plt, ::Val{:inspector_label}) = plt.inspector_label[] == Makie.Automatic()
 
 val(::Val{x}) where {x} = x
 
