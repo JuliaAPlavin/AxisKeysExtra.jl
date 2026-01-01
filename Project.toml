@@ -1,7 +1,7 @@
 name = "AxisKeysExtra"
 uuid = "b7a0d2b7-1990-46dc-b5dd-87820ecd1b09"
 authors = ["Alexander Plavin <alexander@plav.in>"]
-version = "0.1.18"
+version = "0.1.19"
 
 [deps]
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
@@ -11,6 +11,7 @@ StructArrays = "09ab397b-f2b6-538f-b94a-2f83cf4a842a"
 [weakdeps]
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 GeoMakie = "db073c08-6b98-4ee5-b6a4-5efafb3259c6"
+Interpolations = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 RectiGrids = "8ac6971d-971d-971d-971d-971d5ab1a71a"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
@@ -18,6 +19,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 [extensions]
 DimensionalDataExt = "DimensionalData"
 GeoMakieExt = "GeoMakie"
+InterpolationsExt = "Interpolations"
 MakieExt = "Makie"
 RectiGridsExt = "RectiGrids"
 UnitfulExt = "Unitful"
@@ -26,6 +28,7 @@ UnitfulExt = "Unitful"
 AxisKeys = "0.2.15"
 DimensionalData = "0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29"
 GeoMakie = "0.7"
+Interpolations = "0.15"
 Makie = "0.21, 0.22"
 RectiGrids = "0.1.14"
 Reexport = "1.2.2"
