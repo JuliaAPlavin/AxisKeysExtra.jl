@@ -144,7 +144,7 @@ end
     KA_2d = tuple.(KA2, KA2)
 
     fig = Figure()
-    @testset for plotf in (arrows,)
+    @testset for plotf in (arrows, arrows2d)
         xlabel, ylabel = ("a", "b")
         plotf_excl = @eval $(Symbol(nameof(plotf), :!))
 
