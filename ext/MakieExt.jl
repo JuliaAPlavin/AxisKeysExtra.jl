@@ -170,7 +170,8 @@ is_revrange(x::AbstractVector) = false
 is_revrange(x::AbstractRange) = step(x) < zero(step(x))
 
 # pirate Base function for now, so that several packages can avoid depending on each other
-function Base.fill!(ax::Makie.AbstractAxis, plot::Plot, attrs::NamedTuple)
+# XXX: don't remember, why do we need attrs argument here? could we just always call default_*_attributes again?
+function Base.fill!(ax::Makie.AbstractAxis, plot::Plot, attrs::NamedTuple = (axis=default_axis_attributes(plot), plot=default_plot_attributes(plot)))
 	for (k, v) in pairs(attrs.axis)
 		upd_axplt_attr!(ax, k, v)
 	end
