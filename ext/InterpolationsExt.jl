@@ -1,6 +1,7 @@
 module InterpolationsExt
 
 using Interpolations
+using Interpolations.StaticArrays
 using AxisKeysExtra
 
 
@@ -41,11 +42,13 @@ Interpolations.extrapolate(A::KeyedInterpolation, et) = KeyedInterpolation(dimna
 
 (ki::KeyedInterpolation)(args::Vararg{Number}) = ki.interpolation(args...)
 (ki::KeyedInterpolation)(args::NTuple{<:Any, Number}) = ki.interpolation(args...)
+(ki::KeyedInterpolation)(args::SVector) = ki.interpolation(args...)
 (ki::KeyedInterpolation)(args::NamedTuple) = ki.interpolation(args[dimnames(ki)]...)
 (ki::KeyedInterpolation)(;args...) = ki(NamedTuple(args))
 
 Interpolations.gradient(ki::KeyedInterpolation, args::Vararg{Number}) = Interpolations.gradient(ki.interpolation, args...)
 Interpolations.gradient(ki::KeyedInterpolation, args::NTuple{<:Any, Number}) = Interpolations.gradient(ki.interpolation, args...)
+Interpolations.gradient(ki::KeyedInterpolation, args::SVector) = Interpolations.gradient(ki.interpolation, args...)
 function Interpolations.gradient(ki::KeyedInterpolation, args::NamedTuple)  
     keys(args) == dimnames(ki) || throw(ArgumentError("KeyedInterpolation gradient requires keys $(dimnames(ki)) but got $(keys(args))"))
     Interpolations.gradient(ki.interpolation, args...)

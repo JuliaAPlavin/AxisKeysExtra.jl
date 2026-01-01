@@ -117,6 +117,7 @@ end
 
 @testitem "Interpolations" begin
     using Interpolations
+    using StaticArrays
 
     @testset for (A, it) in Any[
         KeyedArray([1 2 3; 4 5 6], a=-1:0, b=1:3) => BSpline(Linear()),
@@ -129,6 +130,9 @@ end
             @test issetequal(dimnames(Ai), dimnames(A))
             @test map(sort, named_axiskeys(Ai)) == map(sort, named_axiskeys(A))
 
+            @test Ai(0, 2) == 5.0
+            @test Ai((0, 2)) == 5.0
+            @test Ai(SVector(0, 2)) == 5.0
             @test Ai(a=0, b=2) == A(a=0, b=2) == 5.0
             @test Ai(a=-0.4, b=2) ≈ 3.8
             @test Ai(a=-0.4, b=2.5) ≈ 4.3
@@ -143,6 +147,9 @@ end
             @test issetequal(dimnames(Aie), dimnames(A))
             @test map(sort, named_axiskeys(Aie)) == map(sort, named_axiskeys(A))
 
+            @test Aie(0, 2) == 5.0
+            @test Aie((0, 2)) == 5.0
+            @test Aie(SVector(0, 2)) == 5.0
             @test Aie(a=0, b=2) == 5.0
             @test Aie(a=-0.4, b=2) ≈ 3.8
             @test Aie(a=-0.4, b=2.5) ≈ 4.3
