@@ -17,6 +17,7 @@ Interpolations = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 RectiGrids = "8ac6971d-971d-971d-971d-971d5ab1a71a"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+VLBISkyModels = "d6343c73-7174-4e0f-bb64-562643efbeca"
 
 [extensions]
 ComradeBaseExt = ["ComradeBase", "Unitful"]
@@ -26,6 +27,7 @@ InterpolationsExt = "Interpolations"
 MakieExt = "Makie"
 RectiGridsExt = "RectiGrids"
 UnitfulExt = "Unitful"
+VLBISkyModelsExt = "VLBISkyModels"
 
 [compat]
 AxisKeys = "0.2.15"
@@ -39,4 +41,5 @@ RectiGrids = "0.1.14"
 Reexport = "1.2.2"
 StructArrays = "0.6.12, 0.7.1"
 Unitful = "1"
+VLBISkyModels = "0.6.13"
 julia = "1.9"

@@ -100,8 +100,8 @@ end
     @test named_axiskeys(KA) == (a=10:10:40, b=[:x, :y])
 end
 
-@testitem "comradebase" begin
-    using ComradeBase, Unitful
+@testitem "comradebase & vlbiskymodels" begin
+    using ComradeBase, Unitful, VLBISkyModels
 
     data = rand(128, 128)
     imap = IntensityMap(data, 12.8, 25.6; header=ComradeBase.NoHeader())
@@ -122,6 +122,10 @@ end
     KA2 = KeyedArray(imap)
     @test all(axiskeys(KA2) .≈ axiskeys(KA))
     @test AxisKeys.keyless_unname(KA2) == AxisKeys.keyless_unname(KA)
+    
+    # Test VLBISkyModels extension
+    cont_img = VLBISkyModels.ContinuousImage(KA, Gaussian())
+    @test cont_img isa VLBISkyModels.ContinuousImage
 end
 
 @testitem "Interpolations" begin
