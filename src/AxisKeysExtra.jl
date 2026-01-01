@@ -4,6 +4,7 @@ using Reexport
 @reexport using AxisKeys
 using StructArrays
 using StructArrays: component, components
+import DataPipes
 
 export with_axiskeys, dimlabel
 
