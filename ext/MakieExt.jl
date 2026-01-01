@@ -53,7 +53,7 @@ Makie.convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
 
 Makie.plot!(p::Arrows{<:Tuple{AbstractMatrix, KeyedArray}}) = arrows!(p, p.attributes, lift(vec, p[1]), lift(vec, p[2]))
 
-Makie._update_voxel(a::KeyedArray, b::KeyedArray, args...) = Makie._update_voxel(keyless_unname(a), keyless_unname(b), args...)
+# Makie._update_voxel(a::KeyedArray, b::KeyedArray, args...) = Makie._update_voxel(keyless_unname(a), keyless_unname(b), args...)
 
 function Makie.plot!(ax::Makie.AbstractAxis, plot::Union{
         Scatter{<:Tuple{KeyedArray}},
