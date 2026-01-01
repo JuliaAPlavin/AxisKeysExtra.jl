@@ -11,6 +11,7 @@ end
 
 @testitem "structarrays" begin
     using StructArrays
+    using StaticArrays
 
     A = StructArray(a=KeyedArray(1:5; x=11:15), b=KeyedArray(10:10:50; x=11:15))
     @test named_axiskeys(A) === (x=11:15,)
@@ -32,6 +33,14 @@ end
     @test A[x=1, y=2].b == 20
     @test A[y=1:2].x == [:x]
     @test A(x=:x, y=11).a == 1
+
+    A = StructArray(KeyedArray([SVector(1, 2), SVector(3, 4)]; a=[:a, :b]))
+    @test named_axiskeys(A) == (;a=[:a, :b])
+    @test A[1] == SVector(1, 2)
+    @test A.a == [:a, :b]
+    @test A.:1 == [1, 3]
+    @test A.x == [1, 3]
+    @test A(a=:a) == SVector(1, 2)
 end
 
 @testitem "axiskeys grid" begin

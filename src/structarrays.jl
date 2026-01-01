@@ -11,7 +11,11 @@ function AxisKeys.axiskeys(A::StructKeyedArray)
     return axiskeys(component(A, 1))
 end
 
-Base.getproperty(A::StructKeyedArray, key::Symbol) = component(merge(named_axiskeys(A), components(A)), key)
+function Base.getproperty(A::StructKeyedArray, key::Symbol)
+    aks = named_axiskeys(A)
+    haskey(aks, key) && return getproperty(aks, key)
+    return component(A, key)
+end
 
 Base.@propagate_inbounds Base.getindex(x::StructArray{<:Any, <:Any, <:TupKeyedArray, Int64}, I...; K...) = _getindex(x, I...; K...)
 Base.@propagate_inbounds Base.getindex(x::StructArray{<:Any, <:Any, <:TupKeyedArray, Int64}, I::Int; K...) = _getindex(x, I...; K...)
