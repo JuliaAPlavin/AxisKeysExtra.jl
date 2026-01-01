@@ -52,6 +52,11 @@ end
     @test isconcretetype(eltype(ak_g))
     @test ak_g == [(a=-1, b=1) (a=-1, b=2) (a=-1, b=3); (a=0, b=1) (a=0, b=2) (a=0, b=3)]
 
+    # Test with Tuple type parameter - returns tuples instead of named tuples
+    ak_g_tuples = with_axiskeys(grid)(Tuple, A)
+    @test ak_g_tuples isa RectiGrid{<:Tuple}
+    @test ak_g_tuples == [(-1, 1) (-1, 2) (-1, 3); (0, 1) (0, 2) (0, 3)]
+
     w_ak = with_axiskeys(A)
     @test isconcretetype(eltype(w_ak))
     @test w_ak[2, 3] === ((a=0, b=3) => 6)
