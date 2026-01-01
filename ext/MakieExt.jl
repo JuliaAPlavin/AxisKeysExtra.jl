@@ -49,16 +49,12 @@ Makie.expand_dimensions(ct::GridBased, x::KeyedArray{<:Any,2}) = (_ustrip.(axisk
 Makie.expand_dimensions(ct::Union{VertexGrid,CellGrid}, x::KeyedArray{<:Any,2}) = (_ustrip.(axiskeys(x))..., x |> _ustrip)
 
 Makie.convert_arguments(ct::Type{<:Arrows}, x::KeyedArray{<:Any,2}) =
-    Point2f.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))'), x |> _ustrip
+    Point2.(_ustrip(axiskeys(x, 1)), _ustrip(axiskeys(x, 2))'), Point2.(x) |> _ustrip
 
-if isdefined(Makie, :_is_3d_arrows)
-    # Makie 0.24
+if pkgversion(Makie) ≥ v"0.24"
+    # _is_3d_arrows is only for arrows() to work; arrows2d() doesn't need it
     Makie._is_3d_arrows(::Union{KeyedArray{<:Any,2}, Observable{<:KeyedArray{<:Any,2}}}) = false
-    Makie._is_3d_arrows(::Union{KeyedArray{<:Any,3}, Observable{<:KeyedArray{<:Any,3}}}) = true
-
-    Makie.plot!(p::Arrows{<:Tuple{AbstractMatrix, KeyedArray}}) = arrows2d!(p, p.attributes, lift(vec, p[1]), lift(vec, p[2]))
 else
-    # Makie 0.22
     Makie.plot!(p::Arrows{<:Tuple{AbstractMatrix, KeyedArray}}) = arrows!(p, p.attributes, lift(vec, p[1]), lift(vec, p[2]))
 end
 
