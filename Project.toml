@@ -29,7 +29,7 @@ UnitfulExt = "Unitful"
 
 [compat]
 AxisKeys = "0.2.15"
-ComradeBase = "0.9.3"
+ComradeBase = "0.8, 0.9"
 DataPipes = "0.3.18"
 DimensionalData = "0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29"
 GeoMakie = "0.7"
