@@ -183,7 +183,23 @@ upd_axplt_attr!(axplt, k::Symbol, v) = if should_update_value(axplt, k)
 	update_value!(axplt, k, v)
 end
 
-update_value!(ax, k::Symbol, v::Observable) = map!(identity, getproperty(ax, k), v)
+function update_value!(ax, k::Symbol, v::Observable)
+	# Source-side dedup: skip the write when the lift's value didn't change.
+	# Without this, an unconditional write back to e.g. `ax.xreversed` lets a
+	# NaN-poisoned ComputePipeline cascade (proj_view → tick boundingbox →
+	# resolve!) loop forever via update_axis_camera. We dedup on the source
+	# rather than reading the destination because reading a plot Computed
+	# (e.g. `plot.inspector_label[]`) locks in a typed RefValue and blocks
+	# later writes of a different type.
+	update_value!(ax, k, v[])
+	last = Ref{Any}(v[])
+	on(v) do new_val
+		last[] == new_val && return
+		last[] = new_val
+		update_value!(ax, k, new_val)
+	end
+	return
+end
 update_value!(ax, k::Symbol, v) = getproperty(ax, k)[] = v
 
 should_update_value(ax, k::Symbol) = hasproperty(ax, k) && should_update_value(ax, Val(k))

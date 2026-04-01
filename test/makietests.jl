@@ -176,6 +176,32 @@ end
     end
 end
 
+@testitem "observable update with NaN" begin
+    # regression: reassigning an Observable{KeyedArray} that contains NaN used to
+    # blow the stack via update_axis_camera ↔ tick-label boundingbox feedback
+    using CairoMakie
+
+    CairoMakie.activate!()
+
+    @testset "heatmap" begin
+        data = Observable(KeyedArray([1f0 NaN32; 3f0 4f0]; x=[1.0, 2.0], y=[1.0, 2.0]))
+        fig = Figure()
+        heatmap(fig[1, 1], data)
+        data[] = KeyedArray([NaN32 2f0; 3f0 4f0]; x=[1.0, 2.0], y=[1.0, 2.0])
+        colorbuffer(fig)
+        @test true
+    end
+
+    @testset "lines" begin
+        data = Observable(KeyedArray([1.0, NaN, 3.0]; x=[1.0, 2.0, 3.0]))
+        fig = Figure()
+        lines(fig[1, 1], data)
+        data[] = KeyedArray([NaN, 2.0, 3.0]; x=[1.0, 2.0, 3.0])
+        colorbuffer(fig)
+        @test true
+    end
+end
+
 @testitem "2d arrows" begin
     using CairoMakie, GLMakie
 
@@ -321,4 +347,11 @@ end
             colorbuffer(fig)
         end
     end
+end
+
+@testitem "makieextra" begin
+    using MakieExtra
+    
+    contourf_fast(KeyedArray(rand(100, 100), a=range(0, 1, length=100), b=range(-1, 2, length=100)))
+    @test current_axis().xlabel[] == "a"
 end
