@@ -58,6 +58,35 @@ else
     Makie.plot!(p::Arrows{<:Tuple{AbstractMatrix, KeyedArray}}) = arrows!(p, p.attributes, lift(vec, p[1]), lift(vec, p[2]))
 end
 
+if pkgversion(Makie) ≥ v"0.24.9"
+    # Makie 0.24.9 (#5459) moved arrow-startpoint sortperm into the Arrows2D recipe; that
+    # call needs vec'd Vector inputs (sortperm on a Matrix needs `dims=`). Redirect to a
+    # child plot built from vec'd plain data; the parent's converted args stay
+    # `(Matrix, KeyedArray)` so our axis-side dispatch and label setup still fire.
+    Makie.plot!(p::Arrows{<:Tuple{<:AbstractMatrix, <:KeyedArray}}) =
+        arrows2d!(p, p.attributes, lift(vec, p[1]), lift(vec, p[2]))
+    # The parent's @recipe-defined `plot!` was bypassed, so its compute graph has no
+    # `:startpoints`/`:endpoints` for the new `data_limits(::Arrows2D)` (also from #5459)
+    # to read. Reduce over children instead.
+    Makie.data_limits(p::Arrows{<:Tuple{<:AbstractMatrix, <:KeyedArray}}) =
+        reduce(Makie.update_boundingbox, Makie.data_limits.(p.plots); init=Makie.Rect3d())
+    Makie.boundingbox(p::Arrows{<:Tuple{<:AbstractMatrix, <:KeyedArray}}, space::Symbol) =
+        reduce(Makie.update_boundingbox, [Makie.boundingbox(c, space) for c in p.plots]; init=Makie.Rect3d())
+end
+
+# Same redirect pattern: Band's recipe (#5035, Makie 0.24.7+) does
+# `push!(::KeyedArray{Point}, ::Point)`, which triggers AxisKeys' axiskey extension and
+# fails when axiskeys are unitful. Send a keyless-unname'd Vector through the recipe.
+Makie.plot!(p::Band{<:Tuple{<:KeyedArray, <:KeyedArray}}) =
+    band!(p, p.attributes, lift(keyless_unname, p[1]), lift(keyless_unname, p[2]))
+
+# Surface: when input flows through Observable, plot[3] stays `KeyedArray{Float32}`,
+# `:scaled_color` propagates as `KeyedArray{RGBA}` and CairoMakie's `draw_mesh3D`
+# typeassert (`Union{RGBAf, Vector{RGBAf}, Matrix{RGBAf}}`) rejects it. Redirect so the
+# child Surface gets a plain Matrix; the parent keeps `KeyedArray` for label setup.
+Makie.plot!(p::Surface{<:Tuple{Any, Any, <:KeyedArray}}) =
+    surface!(p, p.attributes, p[1], p[2], lift(keyless_unname, p[3]))
+
 function Makie.plot!(ax::Makie.AbstractAxis, plot::Union{
         Scatter{<:Tuple{KeyedArray}},
         Lines{<:Tuple{KeyedArray}},

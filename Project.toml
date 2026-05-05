@@ -1,7 +1,7 @@
 name = "AxisKeysExtra"
 uuid = "b7a0d2b7-1990-46dc-b5dd-87820ecd1b09"
 authors = ["Alexander Plavin <alexander@plav.in>"]
-version = "0.1.26"
+version = "0.1.27"
 
 [deps]
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
@@ -31,7 +31,7 @@ VLBISkyModelsExt = "VLBISkyModels"
 AxisKeys = "0.2.15"
 ComradeBase = "0.8, 0.9"
 DataPipes = "0.3.18"
-DimensionalData = "0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29"
+DimensionalData = "0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29, 0.30"
 GeoMakie = "0.7"
 Makie = "0.21, 0.22, 0.24"
 RectiGrids = "0.1.14"
